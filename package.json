@@ -11,6 +11,7 @@
     "dev:mobile": "npm run start --prefix mobile",
     "dev:android": "npm run android --prefix mobile",
     "mobile:android": "npm run android --prefix mobile",
+    "preview": "npm --prefix web run preview -- --port 3000",
     "test:report": "npm run test:report --prefix backend && npm run test:report --prefix web && npm run test:report --prefix mobile"
   },
   "devDependencies": {
