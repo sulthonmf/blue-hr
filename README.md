@@ -2,7 +2,7 @@
 
 > **Sistem Manajemen SDM, Presensi Geofencing GPS Real Device, Biometrik, Multi-Level Approval Cuti, dan Struktur Organisasi Terintegrasi.**
 
-![BlueHR Architecture Banner](docs/screenshots/media_1787368874967.png)
+![BlueHR Architecture Banner](docs/screenshots/web_dashboard.png)
 
 ---
 
@@ -47,16 +47,15 @@
 ## 📸 Tangkapan Layar Aplikasi (App Screenshots)
 
 <p align="center">
-  <img src="docs/screenshots/media_1787368874967.png" width="800" alt="Web Dashboard Overview" />
+  <img src="docs/screenshots/web_dashboard.png" width="800" alt="Web Dashboard Overview" />
   <br>
-  <em>Dashboard HR Enterprise Web & Statistik Presensi</em>
+  <em>Dashboard HR Enterprise Web & Status GPS Geofencing</em>
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/media_1787369909911.png" width="400" alt="Mobile Presensi Geofencing" />
-  <img src="docs/screenshots/media_1787370959051.png" width="400" alt="Mobile Pengajuan Cuti" />
+  <img src="docs/screenshots/mobile_dashboard.png" width="380" alt="Mobile Presensi Geofencing" />
   <br>
-  <em>Presensi Geofencing GPS Real Device & Pengajuan Cuti Mobile App</em>
+  <em>Aplikasi Mobile Presensi Geofencing GPS Real Device</em>
 </p>
 
 ---
