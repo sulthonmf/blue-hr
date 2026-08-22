@@ -111,8 +111,9 @@ export const NewEmployeeModal: React.FC<{ isOpen: boolean; onClose: () => void }
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Nama Lengkap *</label>
+              <label htmlFor="emp-name" className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Nama Lengkap *</label>
               <input
+                id="emp-name"
                 type="text"
                 required
                 placeholder="Contoh: Rian Hidayat"
@@ -123,8 +124,9 @@ export const NewEmployeeModal: React.FC<{ isOpen: boolean; onClose: () => void }
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Email Perusahaan *</label>
+              <label htmlFor="emp-email" className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Email Perusahaan *</label>
               <input
+                id="emp-email"
                 type="email"
                 required
                 placeholder="rian@company.com"
@@ -137,8 +139,9 @@ export const NewEmployeeModal: React.FC<{ isOpen: boolean; onClose: () => void }
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Direksi *</label>
+              <label htmlFor="emp-directorate" className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Direksi *</label>
               <select
+                id="emp-directorate"
                 value={formData.directorate}
                 onChange={(e) => setFormData({ ...formData, directorate: e.target.value })}
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2563eb]/40"
@@ -151,8 +154,9 @@ export const NewEmployeeModal: React.FC<{ isOpen: boolean; onClose: () => void }
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Divisi *</label>
+              <label htmlFor="emp-division" className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Divisi *</label>
               <select
+                id="emp-division"
                 value={formData.division}
                 onChange={(e) => setFormData({ ...formData, division: e.target.value })}
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2563eb]/40"
@@ -164,8 +168,9 @@ export const NewEmployeeModal: React.FC<{ isOpen: boolean; onClose: () => void }
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Departemen *</label>
+              <label htmlFor="emp-department" className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Departemen *</label>
               <input
+                id="emp-department"
                 type="text"
                 required
                 placeholder="Dept Backend / HR"

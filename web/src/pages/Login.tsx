@@ -60,6 +60,7 @@ export const LoginPage: React.FC = () => {
         </button>
         <button
           onClick={toggleTheme}
+          aria-label="Ganti Tema Tampilan"
           className="p-2 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-200 hover:border-[#2563eb] shadow-sm transition-all"
         >
           {theme === "light" ? (
@@ -95,7 +96,7 @@ export const LoginPage: React.FC = () => {
 
         <form onSubmit={handleLogin} className="space-y-4 text-xs">
           <div>
-            <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1.5">
+            <label htmlFor="login-email" className="block text-slate-700 dark:text-slate-300 font-semibold mb-1.5">
               {t.emailLabel}
             </label>
             <div className="relative">
@@ -104,6 +105,7 @@ export const LoginPage: React.FC = () => {
                 className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
               />
               <input
+                id="login-email"
                 type="email"
                 required
                 value={email}
@@ -115,7 +117,7 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1.5">
+            <label htmlFor="login-password" className="block text-slate-700 dark:text-slate-300 font-semibold mb-1.5">
               {t.passwordLabel}
             </label>
             <div className="relative">
@@ -124,6 +126,7 @@ export const LoginPage: React.FC = () => {
                 className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
               />
               <input
+                id="login-password"
                 type="password"
                 required
                 value={password}
