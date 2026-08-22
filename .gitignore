@@ -1,0 +1,28 @@
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+.expo/
+web-build/
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# SQLite database files (local dev DB created on runtime)
+*.db-journal
+
+# Temporary logs & test artifacts
+*.log
+test-report.json
+
+# OS files
+.DS_Store
+Thumbs.db

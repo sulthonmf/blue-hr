@@ -1,0 +1,9 @@
+{
+  "invalidCredentials": "Invalid email or password",
+  "accessTokenRequired": "Access token required",
+  "permissionDenied": "Permission denied: Permission required",
+  "clockInSuccess": "Attendance clock-in verified",
+  "clockInOutOfBounds": "Clock-in out of allowed radius",
+  "leaveQuotaInsufficient": "Insufficient leave quota available",
+  "announcementCreated": "Announcement published successfully"
+}

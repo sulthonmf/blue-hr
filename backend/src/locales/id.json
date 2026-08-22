@@ -1,0 +1,9 @@
+{
+  "invalidCredentials": "Email atau password salah",
+  "accessTokenRequired": "Token akses diperlukan",
+  "permissionDenied": "Akses ditolak: Izin diperlukan",
+  "clockInSuccess": "Presensi masuk terverifikasi",
+  "clockInOutOfBounds": "Presensi di luar radius yang diizinkan",
+  "leaveQuotaInsufficient": "Kuota cuti tidak mencukupi",
+  "announcementCreated": "Pengumuman berhasil diterbitkan"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "blue-hr-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BlueHR Monorepo Root Script Execution",
+  "scripts": {
+    "dev": "concurrently -k -n \"backend,web\" -c \"blue,cyan\" \"npm run dev --prefix backend\" \"npm run dev --prefix web\"",
+    "dev:all": "concurrently -k -n \"backend,web,mobile\" -c \"blue,cyan,magenta\" \"npm run dev --prefix backend\" \"npm run dev --prefix web\" \"npm run start --prefix mobile\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:web": "npm run dev --prefix web",
+    "dev:mobile": "npm run start --prefix mobile",
+    "dev:android": "npm run android --prefix mobile",
+    "mobile:android": "npm run android --prefix mobile",
+    "test:report": "npm run test:report --prefix backend && npm run test:report --prefix web && npm run test:report --prefix mobile"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
