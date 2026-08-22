@@ -96,15 +96,15 @@ export const LocationSimulator: React.FC = () => {
           </div>
           <div>
             <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display flex items-center gap-2">
-              Status Geofence Absensi GPS
+              {t.geofenceStatusTitle || "Status Geofence Absensi GPS"}
               {isRealGPS && (
-                <span className="px-2 py-0.5 text-[10px] bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full font-bold">
-                  🎯 GPS Real Device Active
+                <span className="px-2 py-0.5 text-[10px] bg-blue-100 dark:bg-blue-950 text-[#2563eb] dark:text-blue-400 rounded-full font-extrabold">
+                  {t.gpsRealActive || "GPS Real Device Active"}
                 </span>
               )}
             </h4>
             <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-              Deteksi lokasi asli device atau gunakan penguji radius geofence
+              {t.geofenceStatusSub || "Deteksi lokasi asli device atau gunakan penguji radius geofence"}
             </p>
           </div>
         </div>
@@ -138,11 +138,11 @@ export const LocationSimulator: React.FC = () => {
           className="px-3.5 py-2 bg-[#2563eb] hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl flex items-center gap-1.5 shadow-sm transition-all disabled:opacity-50"
         >
           <Crosshair size={14} />
-          {gpsLoading ? "Mengambil GPS..." : "Deteksi GPS Real Device"}
+          {gpsLoading ? (t.fetchingGPS || "Mengambil GPS...") : (t.detectRealGPSBtn || "Deteksi GPS Real Device")}
         </button>
 
         <span className="text-[11px] font-semibold text-slate-400">
-          atau Mode Testing Simulator:
+          {t.testingSimulatorMode || "atau Mode Testing Simulator:"}
         </span>
 
         <button
@@ -161,7 +161,7 @@ export const LocationSimulator: React.FC = () => {
               : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
           }`}
         >
-          🧪 Testing: Dalam Radius (1.2 km)
+          {t.simInBounds || "Testing: Dalam Radius (1.2 km)"}
         </button>
 
         <button
@@ -180,7 +180,7 @@ export const LocationSimulator: React.FC = () => {
               : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
           }`}
         >
-          🧪 Testing: Di Luar Radius (6.5 km)
+          {t.simOutOfBounds || "Testing: Di Luar Radius (6.5 km)"}
         </button>
       </div>
 

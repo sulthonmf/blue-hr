@@ -108,11 +108,11 @@ export const LocationSimulator: React.FC = () => {
 
       <Text style={styles.distanceText}>
         {t.distanceFromOffice}:{" "}
-        <Text style={styles.distanceVal}>
+        <Text style={{ fontWeight: "900", color: "#2563eb" }}>
           {simulatedDistanceKm.toFixed(1)} km
         </Text>
         {isRealGPS && (
-          <Text style={styles.realTag}> (🎯 GPS Real Device Active)</Text>
+          <Text style={styles.realTag}> (GPS Real Device Active)</Text>
         )}
       </Text>
 
@@ -163,7 +163,7 @@ export const LocationSimulator: React.FC = () => {
                   : styles.textSubLight,
             ]}
           >
-            🧪 Testing: Dalam Radius (1.2 km)
+            Testing: Dalam Radius (1.2 km)
           </Text>
         </TouchableOpacity>
 
@@ -191,7 +191,7 @@ export const LocationSimulator: React.FC = () => {
                   : styles.textSubLight,
             ]}
           >
-            🧪 Testing: Di Luar Radius (6.5 km)
+            Testing: Di Luar Radius (6.5 km)
           </Text>
         </TouchableOpacity>
       </View>

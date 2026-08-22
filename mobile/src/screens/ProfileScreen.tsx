@@ -80,10 +80,10 @@ export const ProfileScreen: React.FC<{
 
         <View style={styles.orgDetailBox}>
           <Text style={styles.orgDetailText}>
-            👑 {user?.directorate || "Direktorat Utama"}
+            {user?.directorate || "Direktorat Utama"}
           </Text>
           <Text style={styles.orgDetailText}>
-            🏢 {user?.division || "Divisi Teknologi & Informasi"}
+            {user?.division || "Divisi Teknologi & Informasi"}
           </Text>
         </View>
       </View>
