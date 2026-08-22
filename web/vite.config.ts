@@ -17,5 +17,19 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  build: {
+    target: 'esnext',
+    minify: 'esbuild',
+    cssMinify: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'icons-vendor': ['lucide-react'],
+          'state-vendor': ['zustand', 'axios']
+        }
+      }
+    }
   }
 });
