@@ -48,7 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
         isCollapsed ? 'w-20' : 'w-64'
       }`}
     >
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex flex-col flex-1 min-h-0">
         {/* Top Brand Logo & Collapse Toggle */}
         <div className="flex items-center justify-between mb-5 px-1 shrink-0">
           {!isCollapsed && (
@@ -65,6 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
           {/* Minimize / Expand Toggle Icon */}
           <button
             onClick={toggleSidebar}
+            aria-label={isCollapsed ? 'Expand Sidebar Navigation' : 'Minimize Sidebar Navigation'}
             className={`p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all ${
               isCollapsed ? 'mx-auto' : ''
             }`}
@@ -76,13 +77,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
 
         {/* Group Header: MENU */}
         {!isCollapsed && (
-          <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2 shrink-0 font-display">
+          <div className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-widest px-3 mb-2 shrink-0 font-display">
             MENU
           </div>
         )}
 
         {/* Floating Menu Card Container */}
-        <div className={`flex-1 overflow-y-auto space-y-1 p-2 rounded-3xl scrollbar-none ${!isCollapsed ? 'bg-slate-50/80 dark:bg-slate-950/60' : ''}`}>
+        <nav role="navigation" aria-label="Sidebar Menu Navigation" className={`flex-1 overflow-y-auto space-y-1 p-2 rounded-3xl scrollbar-none ${!isCollapsed ? 'bg-slate-50/80 dark:bg-slate-950/60' : ''}`}>
           {menuItems.map((item) => {
             if (item.perm && !hasPermission(item.perm)) return null;
             const Icon = item.icon;
@@ -105,7 +106,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
               </button>
             );
           })}
-        </div>
+        </nav>
       </div>
 
       {/* Bottom Profile Pill Card */}

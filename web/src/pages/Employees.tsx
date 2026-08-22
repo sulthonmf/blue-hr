@@ -257,7 +257,7 @@ export const EmployeesPage: React.FC = () => {
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3">
                       {emp.avatar ? (
-                        <img src={emp.avatar} alt={emp.name} className="w-11 h-11 rounded-2xl object-cover border border-slate-200 dark:border-slate-800" />
+                        <img src={emp.avatar} alt={emp.name} loading="lazy" className="w-11 h-11 rounded-2xl object-cover border border-slate-200 dark:border-slate-800" />
                       ) : (
                         <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#2563eb] to-indigo-500 text-white font-extrabold flex items-center justify-center text-sm shadow-md shadow-blue-500/20">
                           {emp.name.substring(0, 2).toUpperCase()}

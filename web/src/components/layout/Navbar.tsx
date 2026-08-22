@@ -49,19 +49,23 @@ export const Navbar: React.FC<{ onOpenActionModal?: () => void }> = ({
       {/* Search Input Bar */}
       <div className="flex items-center gap-2 flex-1 max-w-xl">
         <div className="relative flex-1">
+          <label htmlFor="global-search" className="sr-only">Search</label>
           <Search
             size={16}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
           />
           <input
+            id="global-search"
             type="text"
             placeholder={t.searchPlaceholder || "Search..."}
+            aria-label="Search input"
             className="w-full bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-full pl-11 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2563eb]/40 shadow-sm"
           />
         </div>
         <button
           className="p-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-[#2563eb] transition-all shadow-sm"
           title="Voice Search"
+          aria-label="Pencarian Suara"
         >
           <Mic size={16} />
         </button>
@@ -72,6 +76,7 @@ export const Navbar: React.FC<{ onOpenActionModal?: () => void }> = ({
         {/* Export Button */}
         <button
           onClick={() => alert("Exporting data to CSV/PDF...")}
+          aria-label="Ekspor Data"
           className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:border-[#2563eb] transition-all shadow-sm"
         >
           <Download size={14} />
@@ -82,6 +87,7 @@ export const Navbar: React.FC<{ onOpenActionModal?: () => void }> = ({
         {onOpenActionModal && (
           <button
             onClick={onOpenActionModal}
+            aria-label="Tambah Data Baru"
             className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 transition-all"
           >
             <Plus size={16} />
@@ -93,6 +99,7 @@ export const Navbar: React.FC<{ onOpenActionModal?: () => void }> = ({
         <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-1 rounded-full shadow-sm">
           <button
             onClick={toggleTheme}
+            aria-label="Mode Terang"
             className={`p-1.5 rounded-full transition-all ${
               theme === "light"
                 ? "bg-slate-100 text-amber-500 shadow-sm"
@@ -104,6 +111,7 @@ export const Navbar: React.FC<{ onOpenActionModal?: () => void }> = ({
           </button>
           <button
             onClick={toggleTheme}
+            aria-label="Mode Gelap"
             className={`p-1.5 rounded-full transition-all ${
               theme === "dark"
                 ? "bg-slate-800 text-indigo-400 shadow-sm"
@@ -118,6 +126,7 @@ export const Navbar: React.FC<{ onOpenActionModal?: () => void }> = ({
         {/* Language Switcher */}
         <button
           onClick={toggleLanguage}
+          aria-label="Ganti Bahasa"
           className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-[#2563eb] shadow-sm transition-all"
         >
           <Globe size={14} className="text-[#2563eb]" />
@@ -128,6 +137,7 @@ export const Navbar: React.FC<{ onOpenActionModal?: () => void }> = ({
         <div className="relative">
           <button
             onClick={() => setIsNotifOpen(!isNotifOpen)}
+            aria-label="Pusat Notifikasi"
             className="p-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-[#2563eb] transition-all shadow-sm relative"
           >
             <Bell size={16} />

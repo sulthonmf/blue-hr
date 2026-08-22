@@ -27,10 +27,10 @@ export const DashboardPage: React.FC<{ onNavigate: (tab: string) => void }> = ({
       {/* Top Greeting */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <p className="text-xs text-slate-400 font-medium">{t.goodMorning}</p>
-          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight font-display">
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{t.goodMorning}</p>
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight font-display">
             {user?.department || settings.company_name || 'BlueHR Studio'}
-          </h2>
+          </h1>
         </div>
 
         {/* User Specified Action Buttons */}
