@@ -5,6 +5,7 @@ import {
   CalendarDays,
   Award,
   Users,
+  Building2,
   Box,
   Megaphone,
   Sliders,
@@ -32,13 +33,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
   const menuItems = [
     { id: 'dashboard', label: t.dashboard, icon: LayoutDashboard, perm: null },
     { id: 'attendance', label: t.attendance, icon: Clock, perm: null },
+    { id: 'schedules', label: 'Agenda & Ruang Rapat', icon: CalendarDays, perm: null },
+    { id: 'shifts', label: 'Shift Kerja', icon: Clock, perm: null },
+    { id: 'overtime', label: 'Upah Lembur (SPL)', icon: Clock, perm: null },
+    { id: 'reimbursements', label: 'Klaim Reimbursement', icon: CreditCard, perm: null },
     { id: 'payroll', label: 'Slip Gaji (Payroll)', icon: CreditCard, perm: null },
     { id: 'leave', label: t.leave, icon: CalendarDays, perm: null },
     { id: 'kpi', label: t.kpi, icon: Award, perm: null },
-    { id: 'employees', label: t.employees, icon: Users, perm: 'manage_users' },
+    { id: 'employees', label: t.employees, icon: Users, perm: null },
+    { id: 'branches', label: 'Cabang Perusahaan', icon: Building2, perm: null },
+    { id: 'orgChart', label: 'Struktur Organisasi', icon: Users, perm: null },
+    { id: 'trainings', label: 'Pelatihan & Sertifikat', icon: Award, perm: null },
+    { id: 'offboarding', label: 'Offboarding & SP', icon: Users, perm: null },
+    { id: 'recruitment', label: 'Perekrutan (ATS)', icon: Users, perm: 'manage_users' },
     { id: 'assets', label: t.assets, icon: Box, perm: 'manage_assets' },
     { id: 'announcements', label: t.announcements, icon: Megaphone, perm: null },
     { id: 'roles', label: t.roles, icon: ShieldCheck, perm: 'manage_roles' },
+    { id: 'auditLogs', label: 'Audit Log Trail', icon: ShieldCheck, perm: 'manage_settings' },
     { id: 'settings', label: t.settings, icon: Sliders, perm: 'manage_settings' }
   ];
 

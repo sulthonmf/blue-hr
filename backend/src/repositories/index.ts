@@ -1,5 +1,5 @@
 import { db } from '../config/database';
-import { User, Role, AttendanceRecord, LeaveRequest, KPIRecord, DocumentRecord, AssetRecord, AnnouncementRecord } from '../types';
+import { User, Branch, Role, AttendanceRecord, LeaveRequest, KPIRecord, DocumentRecord, AssetRecord, AnnouncementRecord, ShiftRecord, OvertimeRequest, ReimbursementRecord, JobPosting, JobApplicant, AuditLogRecord, MeetingRoomRecord, MeetingScheduleRecord, ResignationRecord, WarningLetterRecord, TrainingRecord, OrgTreeNode } from '../types';
 
 export const UserRepository = {
   findByEmail: (email: string): Promise<User | undefined> => new Promise((res, rej) => {
@@ -8,12 +8,12 @@ export const UserRepository = {
     });
   }),
   findById: (id: number): Promise<User | undefined> => new Promise((res, rej) => {
-    db.get(`SELECT u.id, u.name, u.email, u.role_id, r.name as role_name, r.permissions, u.position, u.department, u.division, u.directorate, u.phone, u.address, u.emergency_contact_name, u.emergency_contact_phone, u.emergency_contact_relation, u.avatar, u.leave_quota, u.status FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?`, [id], (err, row) => {
+    db.get(`SELECT u.id, u.name, u.email, u.role_id, r.name as role_name, r.permissions, u.position, u.department, u.division, u.directorate, u.phone, u.address, u.emergency_contact_name, u.emergency_contact_phone, u.emergency_contact_relation, u.branch_id, u.branch_name, u.avatar, u.leave_quota, u.status FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?`, [id], (err, row) => {
       if (err) rej(err); else res(row as User);
     });
   }),
   findAll: (): Promise<User[]> => new Promise((res, rej) => {
-    db.all(`SELECT u.id, u.name, u.email, u.role_id, r.name as role_name, u.position, u.department, u.division, u.directorate, u.phone, u.address, u.emergency_contact_name, u.emergency_contact_phone, u.emergency_contact_relation, u.avatar, u.leave_quota, u.status FROM users u JOIN roles r ON u.role_id = r.id ORDER BY u.id DESC`, [], (err, rows) => {
+    db.all(`SELECT u.id, u.name, u.email, u.role_id, r.name as role_name, u.position, u.department, u.division, u.directorate, u.phone, u.address, u.emergency_contact_name, u.emergency_contact_phone, u.emergency_contact_relation, u.branch_id, u.branch_name, u.avatar, u.leave_quota, u.status FROM users u JOIN roles r ON u.role_id = r.id ORDER BY u.id DESC`, [], (err, rows) => {
       if (err) rej(err); else res(rows as User[]);
     });
   }),
@@ -149,6 +149,40 @@ export const KPIRepository = {
   })
 };
 
+export const BranchRepository = {
+  findAll: (): Promise<Branch[]> => new Promise((res, rej) => {
+    db.all(`SELECT * FROM branches ORDER BY id ASC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as Branch[]);
+    });
+  }),
+  findById: (id: number): Promise<Branch | undefined> => new Promise((res, rej) => {
+    db.get(`SELECT * FROM branches WHERE id = ?`, [id], (err, row) => {
+      if (err) rej(err); else res(row as Branch);
+    });
+  }),
+  create: (data: Partial<Branch>): Promise<number> => new Promise((res, rej) => {
+    const { code, name, address, city, phone, latitude, longitude, radius_km, status } = data;
+    db.run(
+      `INSERT INTO branches (code, name, address, city, phone, latitude, longitude, radius_km, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [code, name, address, city, phone || '', latitude || -6.2088, longitude || 106.8456, radius_km || 5.0, status || 'ACTIVE'],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  }),
+  update: (id: number, data: Partial<Branch>): Promise<boolean> => new Promise((res, rej) => {
+    const { code, name, address, city, phone, latitude, longitude, radius_km, status } = data;
+    db.run(
+      `UPDATE branches SET code=?, name=?, address=?, city=?, phone=?, latitude=?, longitude=?, radius_km=?, status=? WHERE id=?`,
+      [code, name, address, city, phone, latitude, longitude, radius_km, status, id],
+      (err) => { if (err) rej(err); else res(true); }
+    );
+  }),
+  delete: (id: number): Promise<boolean> => new Promise((res, rej) => {
+    db.run(`DELETE FROM branches WHERE id=?`, [id], (err) => {
+      if (err) rej(err); else res(true);
+    });
+  })
+};
+
 export const DocumentRepository = {
   findByUserId: (user_id: number): Promise<DocumentRecord[]> => new Promise((res, rej) => {
     db.all(`SELECT * FROM documents WHERE user_id = ? ORDER BY uploaded_at DESC`, [user_id], (err, rows) => {
@@ -161,6 +195,11 @@ export const DocumentRepository = {
       [user_id, doc_type, title, file_url],
       function(err) { if (err) rej(err); else res(this.lastID); }
     );
+  }),
+  delete: (id: number): Promise<boolean> => new Promise((res, rej) => {
+    db.run(`DELETE FROM documents WHERE id = ?`, [id], (err) => {
+      if (err) rej(err); else res(true);
+    });
   })
 };
 
@@ -255,6 +294,270 @@ export const NotificationRepository = {
   markAllRead: (user_id: number): Promise<boolean> => new Promise((res, rej) => {
     db.run(`UPDATE notifications SET read = 1 WHERE user_id = ? OR user_id = 0`, [user_id], (err) => {
       if (err) rej(err); else res(true);
+    });
+  })
+};
+
+export const ShiftRepository = {
+  findAll: (): Promise<ShiftRecord[]> => new Promise((res, rej) => {
+    db.all(`SELECT s.*, b.name as branch_name FROM shifts s LEFT JOIN branches b ON s.branch_id = b.id ORDER BY s.id ASC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as ShiftRecord[]);
+    });
+  }),
+  create: (data: Partial<ShiftRecord>): Promise<number> => new Promise((res, rej) => {
+    const { code, name, start_time, end_time, branch_id, status } = data;
+    db.run(
+      `INSERT INTO shifts (code, name, start_time, end_time, branch_id, status) VALUES (?, ?, ?, ?, ?, ?)`,
+      [code, name, start_time, end_time, branch_id || 1, status || 'ACTIVE'],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  }),
+  update: (id: number, data: Partial<ShiftRecord>): Promise<boolean> => new Promise((res, rej) => {
+    const { code, name, start_time, end_time, branch_id, status } = data;
+    db.run(
+      `UPDATE shifts SET code=?, name=?, start_time=?, end_time=?, branch_id=?, status=? WHERE id=?`,
+      [code, name, start_time, end_time, branch_id, status, id],
+      (err) => { if (err) rej(err); else res(true); }
+    );
+  }),
+  delete: (id: number): Promise<boolean> => new Promise((res, rej) => {
+    db.run(`DELETE FROM shifts WHERE id=?`, [id], (err) => {
+      if (err) rej(err); else res(true);
+    });
+  })
+};
+
+export const OvertimeRepository = {
+  findAll: (): Promise<OvertimeRequest[]> => new Promise((res, rej) => {
+    db.all(`SELECT o.*, u.name as user_name FROM overtime_requests o JOIN users u ON o.user_id = u.id ORDER BY o.id DESC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as OvertimeRequest[]);
+    });
+  }),
+  findByUserId: (user_id: number): Promise<OvertimeRequest[]> => new Promise((res, rej) => {
+    db.all(`SELECT * FROM overtime_requests WHERE user_id = ? ORDER BY id DESC`, [user_id], (err, rows) => {
+      if (err) rej(err); else res(rows as OvertimeRequest[]);
+    });
+  }),
+  create: (data: Partial<OvertimeRequest>): Promise<number> => new Promise((res, rej) => {
+    const { user_id, date, hours, reason, rate_per_hour } = data;
+    const rate = rate_per_hour || 50000;
+    const total_pay = (hours || 0) * rate;
+    db.run(
+      `INSERT INTO overtime_requests (user_id, date, hours, reason, rate_per_hour, total_pay) VALUES (?, ?, ?, ?, ?, ?)`,
+      [user_id, date, hours, reason, rate, total_pay],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  }),
+  updateStatus: (id: number, status: 'APPROVED' | 'REJECTED', approved_by: number): Promise<boolean> => new Promise((res, rej) => {
+    db.run(`UPDATE overtime_requests SET status = ?, approved_by = ? WHERE id = ?`, [status, approved_by, id], (err) => {
+      if (err) rej(err); else res(true);
+    });
+  })
+};
+
+export const ReimbursementRepository = {
+  findAll: (): Promise<ReimbursementRecord[]> => new Promise((res, rej) => {
+    db.all(`SELECT r.*, u.name as user_name FROM reimbursements r JOIN users u ON r.user_id = u.id ORDER BY r.id DESC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as ReimbursementRecord[]);
+    });
+  }),
+  findByUserId: (user_id: number): Promise<ReimbursementRecord[]> => new Promise((res, rej) => {
+    db.all(`SELECT * FROM reimbursements WHERE user_id = ? ORDER BY id DESC`, [user_id], (err, rows) => {
+      if (err) rej(err); else res(rows as ReimbursementRecord[]);
+    });
+  }),
+  create: (data: Partial<ReimbursementRecord>): Promise<number> => new Promise((res, rej) => {
+    const { user_id, title, category, amount, receipt_url } = data;
+    db.run(
+      `INSERT INTO reimbursements (user_id, title, category, amount, receipt_url) VALUES (?, ?, ?, ?, ?)`,
+      [user_id, title, category || 'MEDICAL', amount, receipt_url || ''],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  }),
+  updateStatus: (id: number, status: 'APPROVED' | 'REJECTED', approved_by: number): Promise<boolean> => new Promise((res, rej) => {
+    db.run(`UPDATE reimbursements SET status = ?, approved_by = ? WHERE id = ?`, [status, approved_by, id], (err) => {
+      if (err) rej(err); else res(true);
+    });
+  })
+};
+
+export const RecruitmentRepository = {
+  findAllJobs: (): Promise<JobPosting[]> => new Promise((res, rej) => {
+    db.all(`SELECT * FROM recruitment_jobs ORDER BY id DESC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as JobPosting[]);
+    });
+  }),
+  createJob: (data: Partial<JobPosting>): Promise<number> => new Promise((res, rej) => {
+    const { title, department, branch_id, description, requirements } = data;
+    db.run(
+      `INSERT INTO recruitment_jobs (title, department, branch_id, description, requirements) VALUES (?, ?, ?, ?, ?)`,
+      [title, department, branch_id || 1, description, requirements || ''],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  }),
+  findAllApplicants: (): Promise<JobApplicant[]> => new Promise((res, rej) => {
+    db.all(`SELECT a.*, j.title as job_title FROM job_applicants a JOIN recruitment_jobs j ON a.job_id = j.id ORDER BY a.id DESC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as JobApplicant[]);
+    });
+  }),
+  createApplicant: (data: Partial<JobApplicant>): Promise<number> => new Promise((res, rej) => {
+    const { job_id, name, email, phone, resume_url } = data;
+    db.run(
+      `INSERT INTO job_applicants (job_id, name, email, phone, resume_url) VALUES (?, ?, ?, ?, ?)`,
+      [job_id, name, email, phone, resume_url || ''],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  }),
+  updateApplicantStatus: (id: number, status: string): Promise<boolean> => new Promise((res, rej) => {
+    db.run(`UPDATE job_applicants SET status = ? WHERE id = ?`, [status, id], (err) => {
+      if (err) rej(err); else res(true);
+    });
+  })
+};
+
+export const AuditLogRepository = {
+  findAll: (): Promise<AuditLogRecord[]> => new Promise((res, rej) => {
+    db.all(`SELECT * FROM audit_logs ORDER BY id DESC LIMIT 200`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as AuditLogRecord[]);
+    });
+  }),
+  create: (data: { user_id?: number; user_name?: string; action: string; entity: string; details?: string; ip_address?: string }): Promise<number> => new Promise((res, rej) => {
+    const { user_id, user_name, action, entity, details, ip_address } = data;
+    db.run(
+      `INSERT INTO audit_logs (user_id, user_name, action, entity, details, ip_address) VALUES (?, ?, ?, ?, ?, ?)`,
+      [user_id || 0, user_name || 'System', action, entity, details || '', ip_address || '127.0.0.1'],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  })
+};
+
+export const MeetingRoomRepository = {
+  findAll: (): Promise<MeetingRoomRecord[]> => new Promise((res, rej) => {
+    db.all(`SELECT * FROM meeting_rooms ORDER BY id ASC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as MeetingRoomRecord[]);
+    });
+  }),
+  create: (data: Partial<MeetingRoomRecord>): Promise<number> => new Promise((res, rej) => {
+    const { name, capacity, location, facilities, branch_id, status } = data;
+    db.run(
+      `INSERT INTO meeting_rooms (name, capacity, location, facilities, branch_id, status) VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, capacity || 10, location, facilities || '', branch_id || 1, status || 'AVAILABLE'],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  })
+};
+
+export const MeetingScheduleRepository = {
+  findAll: (): Promise<MeetingScheduleRecord[]> => new Promise((res, rej) => {
+    db.all(`SELECT s.*, r.name as room_name, u.name as user_name FROM meeting_schedules s LEFT JOIN meeting_rooms r ON s.room_id = r.id JOIN users u ON s.user_id = u.id WHERE s.status = 'CONFIRMED' ORDER BY s.date ASC, s.start_time ASC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as MeetingScheduleRecord[]);
+    });
+  }),
+  checkConflict: (room_id: number, date: string, start_time: string, end_time: string): Promise<boolean> => new Promise((res, rej) => {
+    // Check if any existing confirmed booking overlaps
+    db.get(
+      `SELECT COUNT(*) as count FROM meeting_schedules WHERE room_id = ? AND date = ? AND status = 'CONFIRMED' AND (start_time < ? AND end_time > ?)`,
+      [room_id, date, end_time, start_time],
+      (err, row: any) => {
+        if (err) rej(err);
+        else res(row && row.count > 0); // Returns true if conflict exists
+      }
+    );
+  }),
+  create: (data: Partial<MeetingScheduleRecord>): Promise<number> => new Promise((res, rej) => {
+    const { title, room_id, user_id, date, start_time, end_time, meeting_link, description } = data;
+    db.run(
+      `INSERT INTO meeting_schedules (title, room_id, user_id, date, start_time, end_time, meeting_link, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [title, room_id || null, user_id, date, start_time, end_time, meeting_link || '', description || ''],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  }),
+  cancel: (id: number): Promise<boolean> => new Promise((res, rej) => {
+    db.run(`UPDATE meeting_schedules SET status = 'CANCELLED' WHERE id = ?`, [id], (err) => {
+      if (err) rej(err); else res(true);
+    });
+  })
+};
+
+export const OffboardingRepository = {
+  findAllResignations: (): Promise<ResignationRecord[]> => new Promise((res, rej) => {
+    db.all(`SELECT r.*, u.name as user_name FROM resignations r JOIN users u ON r.user_id = u.id ORDER BY r.id DESC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as ResignationRecord[]);
+    });
+  }),
+  createResignation: (data: Partial<ResignationRecord>): Promise<number> => new Promise((res, rej) => {
+    const { user_id, reason, notice_date, effective_date, exit_clearance_notes } = data;
+    db.run(
+      `INSERT INTO resignations (user_id, reason, notice_date, effective_date, exit_clearance_notes) VALUES (?, ?, ?, ?, ?)`,
+      [user_id, reason, notice_date, effective_date, exit_clearance_notes || ''],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  }),
+  updateResignationStatus: (id: number, status: string, notes?: string): Promise<boolean> => new Promise((res, rej) => {
+    db.run(`UPDATE resignations SET status = ?, exit_clearance_notes = ? WHERE id = ?`, [status, notes || '', id], (err) => {
+      if (err) rej(err); else res(true);
+    });
+  })
+};
+
+export const WarningRepository = {
+  findAll: (): Promise<WarningLetterRecord[]> => new Promise((res, rej) => {
+    db.all(`SELECT w.*, u.name as user_name FROM warning_letters w JOIN users u ON w.user_id = u.id ORDER BY w.id DESC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as WarningLetterRecord[]);
+    });
+  }),
+  create: (data: Partial<WarningLetterRecord>): Promise<number> => new Promise((res, rej) => {
+    const { user_id, level, reason, issued_by, issued_date } = data;
+    db.run(
+      `INSERT INTO warning_letters (user_id, level, reason, issued_by, issued_date) VALUES (?, ?, ?, ?, ?)`,
+      [user_id, level || 'SP1', reason, issued_by || 'HR Manager', issued_date],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  })
+};
+
+export const TrainingRepository = {
+  findAll: (): Promise<TrainingRecord[]> => new Promise((res, rej) => {
+    db.all(`SELECT t.*, u.name as user_name FROM employee_trainings t JOIN users u ON t.user_id = u.id ORDER BY t.id DESC`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as TrainingRecord[]);
+    });
+  }),
+  create: (data: Partial<TrainingRecord>): Promise<number> => new Promise((res, rej) => {
+    const { user_id, title, provider, category, start_date, end_date, certification_url, expiry_date } = data;
+    db.run(
+      `INSERT INTO employee_trainings (user_id, title, provider, category, start_date, end_date, certification_url, expiry_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [user_id, title, provider, category || 'TECHNICAL', start_date, end_date, certification_url || '', expiry_date || null],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  }),
+  delete: (id: number): Promise<boolean> => new Promise((res, rej) => {
+    db.run(`DELETE FROM employee_trainings WHERE id = ?`, [id], (err) => {
+      if (err) rej(err); else res(true);
+    });
+  })
+};
+
+export const OrgChartRepository = {
+  getTree: (): Promise<OrgTreeNode[]> => new Promise((res, rej) => {
+    db.all(`SELECT id, name, position, department, branch_name, avatar, manager_id FROM users WHERE status = 'ACTIVE' ORDER BY id ASC`, [], (err, rows: any[]) => {
+      if (err) return rej(err);
+
+      // Build Hierarchy Tree
+      const userMap = new Map<number, OrgTreeNode>();
+      rows.forEach(r => {
+        userMap.set(r.id, { ...r, subordinates: [] });
+      });
+
+      const rootNodes: OrgTreeNode[] = [];
+      userMap.forEach(node => {
+        if (node.manager_id && userMap.has(node.manager_id)) {
+          userMap.get(node.manager_id)!.subordinates!.push(node);
+        } else {
+          rootNodes.push(node);
+        }
+      });
+
+      res(rootNodes);
     });
   })
 };

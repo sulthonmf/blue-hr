@@ -47,14 +47,14 @@ export const LoginScreen: React.FC = () => {
           <Text style={[styles.brandName, isDark ? styles.textDark : styles.textLight]}>
             BlueHR Mobile
           </Text>
-          <Text style={styles.subText}>Standard HR Geofence Portal</Text>
+          <Text style={styles.subText}>{t.loginSub || 'Enterprise HR Mobile Portal'}</Text>
         </View>
 
         <Text style={[styles.label, isDark ? styles.textDark : styles.textLight]}>
           {t.emailLabel}
         </Text>
         <TextInput
-          placeholder="user@company.com"
+          placeholder={t.enterEmailPlaceholder || "user@company.com"}
           placeholderTextColor="#94a3b8"
           value={email}
           onChangeText={setEmail}

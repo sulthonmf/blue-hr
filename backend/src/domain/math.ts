@@ -35,6 +35,32 @@ export function isWithinGeofence(
   };
 }
 
+export interface PasswordRulesStatus {
+  minLength: boolean;
+  hasUpper: boolean;
+  hasLower: boolean;
+  hasNumber: boolean;
+  hasSpecial: boolean;
+  isValid: boolean;
+}
+
+export function checkPasswordRules(password: string): PasswordRulesStatus {
+  const minLength = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+  return {
+    minLength,
+    hasUpper,
+    hasLower,
+    hasNumber,
+    hasSpecial,
+    isValid: minLength && hasUpper && hasLower && hasNumber && hasSpecial
+  };
+}
+
 /**
  * Validates dynamic role permission checks.
  */

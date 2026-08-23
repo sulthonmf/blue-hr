@@ -206,9 +206,9 @@ export const LocationSimulator: React.FC = () => {
           className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#2563eb]"
         />
         <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-          <span>0.0 km ({t.atOffice})</span>
-          <span>5.0 km ({t.atBound})</span>
-          <span>12.0 km ({t.outRange})</span>
+          <span>0.0 km ({(t as any).atOffice || "Dalam Radius"})</span>
+          <span>5.0 km ({(t as any).atBound || "Di Luar Radius"})</span>
+          <span>12.0 km ({t.outRange || "Di Luar Radius"})</span>
         </div>
       </div>
     </div>

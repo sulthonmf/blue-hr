@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,17 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Modal,
+  TextInput,
+  Alert
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useAuthStore } from "../stores/useAuthStore";
+import { useHRStore } from "../stores/useHRStore";
 import { useThemeStore } from "../stores/useThemeStore";
 import { useLanguageStore } from "../stores/useLanguageStore";
+import { PasswordStrengthChecklist } from "../components/modules/PasswordStrengthChecklist";
+import { apiClient } from "../api/client";
 
 export const ProfileScreen: React.FC<{
   onOpenAvatarUploadModal: () => void;
@@ -18,6 +24,50 @@ export const ProfileScreen: React.FC<{
   const { user, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
   const { lang, toggleLanguage, t } = useLanguageStore();
+
+  const { requestResignation } = useHRStore();
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [isResignModalOpen, setIsResignModalOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [resignReason, setResignReason] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handlePasswordChange = async () => {
+    if (!newPassword) return Alert.alert('Peringatan', 'Password baru harus diisi');
+    setLoading(true);
+    try {
+      await apiClient.post('/auth/change-password', { newPassword });
+      Alert.alert('Sukses', 'Password Anda berhasil diperbarui!');
+      setIsPasswordModalOpen(false);
+      setNewPassword('');
+    } catch (err: any) {
+      Alert.alert('Gagal', err.response?.data?.error || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResignSubmit = async () => {
+    if (!resignReason) return Alert.alert('Peringatan', 'Alasan resign harus diisi');
+    setLoading(true);
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const effective = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+      await requestResignation({
+        reason: resignReason,
+        notice_date: today,
+        effective_date: effective,
+        exit_clearance_notes: 'Pengembalian Laptop & Akses'
+      });
+      Alert.alert('Sukses', 'Pengajuan resign & exit clearance berhasil dikirim ke HR');
+      setIsResignModalOpen(false);
+      setResignReason('');
+    } catch (err: any) {
+      Alert.alert('Gagal', err.response?.data?.error || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const isDark = theme === "dark";
 
@@ -80,6 +130,9 @@ export const ProfileScreen: React.FC<{
 
         <View style={styles.orgDetailBox}>
           <Text style={styles.orgDetailText}>
+            Cabang: {user?.branch_name || "Kantor Pusat Jakarta"}
+          </Text>
+          <Text style={styles.orgDetailText}>
             {user?.directorate || "Direktorat Utama"}
           </Text>
           <Text style={styles.orgDetailText}>
@@ -103,6 +156,20 @@ export const ProfileScreen: React.FC<{
         >
           Kontak & Informasi Darurat
         </Text>
+        <View style={styles.infoRow}>
+          <Feather name="briefcase" size={16} color="#2563eb" />
+          <View>
+            <Text style={styles.infoLabel}>Cabang Penempatan</Text>
+            <Text
+              style={[
+                styles.infoVal,
+                isDark ? styles.textDark : styles.textLight,
+              ]}
+            >
+              {user?.branch_name || "Kantor Pusat Jakarta"}
+            </Text>
+          </View>
+        </View>
         <View style={styles.infoRow}>
           <Feather name="phone-call" size={16} color="#2563eb" />
           <View>
@@ -165,16 +232,45 @@ export const ProfileScreen: React.FC<{
           Pengaturan Aplikasi
         </Text>
 
-        <TouchableOpacity onPress={toggleTheme} style={styles.menuRow}>
+        <TouchableOpacity style={styles.menuRow} onPress={toggleTheme}>
           <View style={styles.menuLeft}>
-            <Feather name={isDark ? "sun" : "moon"} size={18} color="#2563eb" />
+            <Feather
+              name={isDark ? "sun" : "moon"}
+              size={18}
+              color={isDark ? "#f59e0b" : "#64748b"}
+            />
             <Text
               style={[
                 styles.menuText,
                 isDark ? styles.textDark : styles.textLight,
               ]}
             >
-              Tema Tampilan ({theme === "dark" ? "Gelap" : "Terang"})
+              {t.themeMode}: {isDark ? t.dark : t.light}
+            </Text>
+          </View>
+          <Feather name="chevron-right" size={18} color="#94a3b8" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuRow} onPress={() => setIsPasswordModalOpen(true)}>
+          <View style={styles.menuLeft}>
+            <Feather name="lock" size={18} color="#2563eb" />
+            <Text
+              style={[
+                styles.menuText,
+                isDark ? styles.textDark : styles.textLight,
+              ]}
+            >
+              {t.securityChangePassword || 'Keamanan: Ganti Password'}
+            </Text>
+          </View>
+          <Feather name="chevron-right" size={18} color="#94a3b8" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuRow} onPress={() => setIsResignModalOpen(true)}>
+          <View style={styles.menuLeft}>
+            <Feather name="log-out" size={18} color="#f43f5e" />
+            <Text style={[styles.menuText, { color: '#f43f5e' }]}>
+              {t.offboarding || 'Offboarding: Pengajuan Resign'}
             </Text>
           </View>
           <Feather name="chevron-right" size={18} color="#94a3b8" />
@@ -189,7 +285,7 @@ export const ProfileScreen: React.FC<{
                 isDark ? styles.textDark : styles.textLight,
               ]}
             >
-              Bahasa / Language ({lang})
+              {t.languageSetting || 'Bahasa / Language'} ({lang})
             </Text>
           </View>
           <Feather name="chevron-right" size={18} color="#94a3b8" />
@@ -201,6 +297,123 @@ export const ProfileScreen: React.FC<{
         <Feather name="log-out" size={18} color="#ffffff" />
         <Text style={styles.logoutBtnText}>{t.logout}</Text>
       </TouchableOpacity>
+
+      {/* Password Change Modal with Realtime Checklist */}
+      <Modal visible={isPasswordModalOpen} animationType="slide" transparent>
+        <View style={{ flex: 1, backgroundColor: 'rgba(15, 23, 42, 0.75)', justifyContent: 'center', padding: 20 }}>
+          <View style={[{ padding: 20, borderRadius: 24, borderWidth: 1 }, isDark ? styles.cardDark : styles.cardLight]}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <Text style={[{ fontSize: 14, fontWeight: '900' }, isDark ? styles.textDark : styles.textLight]}>
+                Ganti Password Akun
+              </Text>
+              <TouchableOpacity onPress={() => setIsPasswordModalOpen(false)}>
+                <Feather name="x" size={20} color="#94a3b8" />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={{ fontSize: 10, color: '#94a3b8', marginBottom: 10 }}>
+              Masukkan kata sandi baru yang memenuhi kriteria standar keamanan perusahaan.
+            </Text>
+
+            <TextInput
+              secureTextEntry
+              placeholder="Masukkan password baru..."
+              placeholderTextColor="#94a3b8"
+              value={newPassword}
+              onChangeText={setNewPassword}
+              style={{
+                borderWidth: 1,
+                borderColor: isDark ? '#334155' : '#cbd5e1',
+                backgroundColor: isDark ? '#020617' : '#f8fafc',
+                color: isDark ? '#ffffff' : '#0f172a',
+                paddingHorizontal: 12,
+                paddingVertical: 10,
+                borderRadius: 12,
+                fontSize: 12,
+                marginBottom: 8
+              }}
+            />
+
+            <PasswordStrengthChecklist password={newPassword} isDark={isDark} />
+
+            <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
+              <TouchableOpacity
+                onPress={() => setIsPasswordModalOpen(false)}
+                style={{ flex: 1, paddingVertical: 12, borderRadius: 14, borderWidth: 1, borderColor: '#cbd5e1', alignItems: 'center' }}
+              >
+                <Text style={{ fontSize: 12, fontWeight: '800', color: '#64748b' }}>Batal</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handlePasswordChange}
+                disabled={loading}
+                style={{ flex: 1, paddingVertical: 12, borderRadius: 14, backgroundColor: '#2563eb', alignItems: 'center' }}
+              >
+                <Text style={{ fontSize: 12, fontWeight: '900', color: '#ffffff' }}>
+                  {loading ? 'Simpan...' : 'Simpan Password'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Resignation / Offboarding Request Modal */}
+      <Modal visible={isResignModalOpen} animationType="slide" transparent>
+        <View style={{ flex: 1, backgroundColor: 'rgba(15, 23, 42, 0.75)', justifyContent: 'center', padding: 20 }}>
+          <View style={[{ padding: 20, borderRadius: 24, borderWidth: 1 }, isDark ? styles.cardDark : styles.cardLight]}>
+            <View style={{ flexDirection: 'row', justify: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <Text style={[{ fontSize: 14, fontWeight: '900', color: '#f43f5e' }]}>
+                Pengajuan Resign Karyawan
+              </Text>
+              <TouchableOpacity onPress={() => setIsResignModalOpen(false)}>
+                <Feather name="x" size={20} color="#94a3b8" />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={{ fontSize: 10, color: '#94a3b8', marginBottom: 10 }}>
+              Sampaikan alasan pengajuan resign Anda ke Tim HR (Pemberitahuan 1 Bulan / 1 Month Notice).
+            </Text>
+
+            <TextInput
+              multiline
+              numberOfLines={3}
+              placeholder="Alasan pengajuan resign..."
+              placeholderTextColor="#94a3b8"
+              value={resignReason}
+              onChangeText={setResignReason}
+              style={{
+                borderWidth: 1,
+                borderColor: isDark ? '#334155' : '#cbd5e1',
+                backgroundColor: isDark ? '#020617' : '#f8fafc',
+                color: isDark ? '#ffffff' : '#0f172a',
+                paddingHorizontal: 12,
+                paddingVertical: 10,
+                borderRadius: 12,
+                fontSize: 12,
+                marginBottom: 14
+              }}
+            />
+
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              <TouchableOpacity
+                onPress={() => setIsResignModalOpen(false)}
+                style={{ flex: 1, paddingVertical: 12, borderRadius: 14, borderWidth: 1, borderColor: '#cbd5e1', alignItems: 'center' }}
+              >
+                <Text style={{ fontSize: 12, fontWeight: '800', color: '#64748b' }}>Batal</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleResignSubmit}
+                disabled={loading}
+                style={{ flex: 1, paddingVertical: 12, borderRadius: 14, backgroundColor: '#f43f5e', alignItems: 'center' }}
+              >
+                <Text style={{ fontSize: 12, fontWeight: '900', color: '#ffffff' }}>
+                  {loading ? 'Kirim...' : 'Kirim Resign'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };

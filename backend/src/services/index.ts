@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {
   UserRepository,
+  BranchRepository,
   RoleRepository,
   AttendanceRepository,
   LeaveRepository,
@@ -11,12 +12,24 @@ import {
   AnnouncementRepository,
   PayrollRepository,
   SettingsRepository,
-  NotificationRepository
+  NotificationRepository,
+  ShiftRepository,
+  OvertimeRepository,
+  ReimbursementRepository,
+  RecruitmentRepository,
+  AuditLogRepository,
+  MeetingRoomRepository,
+  MeetingScheduleRepository,
+  OffboardingRepository,
+  WarningRepository,
+  TrainingRepository,
+  OrgChartRepository
 } from '../repositories';
 import { isWithinGeofence } from '../domain/math';
 import { User, LeaveRequest } from '../types';
 
 export const JWT_SECRET = process.env.JWT_SECRET || 'bluehr_super_secret_jwt_key_2026';
+export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'bluehr_super_secret_refresh_jwt_key_2026';
 
 export const AuthService = {
   login: async (email: string, password: string) => {
@@ -26,14 +39,24 @@ export const AuthService = {
     if (!isMatch) throw new Error('Invalid email or password');
 
     const permissions = JSON.parse((user.permissions as unknown as string) || '[]');
+    
+    // Short-lived Access Token (15m)
     const token = jwt.sign(
       { id: user.id, email: user.email, role_id: user.role_id, role_name: user.role_name, permissions },
       JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    // Refresh Token (7d)
+    const refreshToken = jwt.sign(
+      { id: user.id, email: user.email },
+      JWT_REFRESH_SECRET,
       { expiresIn: '7d' }
     );
 
     return {
       token,
+      refreshToken,
       user: {
         id: user.id,
         name: user.name,
@@ -45,6 +68,29 @@ export const AuthService = {
         permissions
       }
     };
+  },
+
+  refreshAccessToken: async (refreshToken: string) => {
+    if (!refreshToken) throw new Error('Refresh token is required');
+    const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as { id: number; email: string };
+    const user = await UserRepository.findById(decoded.id);
+    if (!user) throw new Error('User not found');
+
+    const permissions = JSON.parse((user.permissions as unknown as string) || '[]');
+    
+    const newToken = jwt.sign(
+      { id: user.id, email: user.email, role_id: user.role_id, role_name: user.role_name, permissions },
+      JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    const newRefreshToken = jwt.sign(
+      { id: user.id, email: user.email },
+      JWT_REFRESH_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    return { token: newToken, refreshToken: newRefreshToken, user };
   },
 
   registerEmployee: async (data: Partial<User> & { password?: string }) => {
@@ -226,6 +272,7 @@ export const LeaveService = {
 // Re-export repositories for direct use in routes
 export {
   UserRepository,
+  BranchRepository,
   RoleRepository,
   AttendanceRepository,
   LeaveRepository,
@@ -235,5 +282,16 @@ export {
   AnnouncementRepository,
   PayrollRepository,
   SettingsRepository,
-  NotificationRepository
+  NotificationRepository,
+  ShiftRepository,
+  OvertimeRepository,
+  ReimbursementRepository,
+  RecruitmentRepository,
+  AuditLogRepository,
+  MeetingRoomRepository,
+  MeetingScheduleRepository,
+  OffboardingRepository,
+  WarningRepository,
+  TrainingRepository,
+  OrgChartRepository
 };

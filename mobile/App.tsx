@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, SafeAreaView, StatusBar } from 'react-native';
+import { StyleSheet, View, SafeAreaView, StatusBar as RNStatusBar, Platform, ActivityIndicator } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useAuthStore } from './src/stores/useAuthStore';
 import { useHRStore } from './src/stores/useHRStore';
 import { useThemeStore } from './src/stores/useThemeStore';
@@ -18,9 +19,10 @@ import { HomeScreen } from './src/screens/HomeScreen';
 import { AttendanceScreen } from './src/screens/AttendanceScreen';
 import { LeaveScreen } from './src/screens/LeaveScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
+import { EmployeesScreen } from './src/screens/EmployeesScreen';
 
 export default function App() {
-  const { token } = useAuthStore();
+  const { token, isInitializing, initAuth } = useAuthStore();
   const { fetchData } = useHRStore();
   const { theme } = useThemeStore();
 
@@ -33,16 +35,32 @@ export default function App() {
 
   const isDark = theme === 'dark';
 
+  // Restore authentication session from AsyncStorage on app launch
+  useEffect(() => {
+    initAuth();
+  }, []);
+
+  // Fetch HR data once token is authenticated
   useEffect(() => {
     if (token) {
       fetchData();
     }
   }, [token]);
 
+  // Render splash/loading screen while checking stored credentials
+  if (isInitializing) {
+    return (
+      <View style={[styles.splashContainer, isDark ? styles.bgDark : styles.bgLight]}>
+        <StatusBar style={isDark ? 'light' : 'dark'} translucent />
+        <ActivityIndicator size="large" color="#2563eb" />
+      </View>
+    );
+  }
+
   if (!token) {
     return (
-      <SafeAreaView style={[styles.container, isDark ? styles.bgDark : styles.bgLight]}>
-        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+      <SafeAreaView style={[styles.container, isDark ? styles.bgDark : styles.bgLight, styles.safeTopPadding]}>
+        <StatusBar style={isDark ? 'light' : 'dark'} translucent />
         <LoginScreen />
         <GlobalLoadingOverlay />
         <ErrorPopupModal />
@@ -52,6 +70,8 @@ export default function App() {
 
   const renderActiveScreen = () => {
     switch (activeTab) {
+      case 'employees':
+        return <EmployeesScreen />;
       case 'attendance':
         return <AttendanceScreen />;
       case 'leave':
@@ -67,14 +87,15 @@ export default function App() {
             onOpenClockInModal={() => setIsClockInOpen(true)}
             onOpenLeaveModal={() => setIsLeaveOpen(true)}
             onOpenAnnouncementModal={() => setIsAnnounceOpen(true)}
+            onNavigate={(tab) => setActiveTab(tab)}
           />
         );
     }
   };
 
   return (
-    <SafeAreaView style={[styles.container, isDark ? styles.bgDark : styles.bgLight]}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+    <SafeAreaView style={[styles.container, isDark ? styles.bgDark : styles.bgLight, styles.safeTopPadding]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} translucent />
 
       {/* Clean Architecture Header */}
       <Header activeTab={activeTab} onOpenNotif={() => setIsNotifOpen(true)} />
@@ -99,6 +120,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  splashContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  safeTopPadding: { paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0 },
   bgDark: { backgroundColor: '#0f172a' },
   bgLight: { backgroundColor: '#ffffff' },
   screenContainer: { flex: 1 }

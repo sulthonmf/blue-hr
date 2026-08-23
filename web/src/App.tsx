@@ -9,13 +9,23 @@ import { LoginPage } from "./pages/Login";
 
 import { DashboardPage } from "./pages/Dashboard";
 import { AttendancePage } from "./pages/Attendance";
+import { SchedulesPage } from "./pages/Schedules";
+import { ShiftsPage } from "./pages/Shifts";
+import { OvertimePage } from "./pages/Overtime";
+import { ReimbursementsPage } from "./pages/Reimbursements";
 import { PayrollPage } from "./pages/Payroll";
 import { LeavePage } from "./pages/Leave";
 import { KPIPage } from "./pages/KPI";
 import { EmployeesPage } from "./pages/Employees";
+import { BranchesPage } from "./pages/Branches";
+import { OffboardingPage } from "./pages/Offboarding";
+import { TrainingsPage } from "./pages/Trainings";
+import { OrgChartPage } from "./pages/OrgChart";
+import { RecruitmentPage } from "./pages/Recruitment";
 import { AssetsPage } from "./pages/Assets";
 import { AnnouncementsPage } from "./pages/Announcements";
 import { RolesPage } from "./pages/Roles";
+import { AuditLogsPage } from "./pages/AuditLogs";
 import { SettingsPage } from "./pages/Settings";
 
 export const App: React.FC = () => {
@@ -42,15 +52,7 @@ export const App: React.FC = () => {
   }, [theme]);
 
   if (!token) {
-    return (
-      <div
-        className={
-          theme === "dark" ? "dark bg-[#090d16]" : "light bg-[#eef0f3]"
-        }
-      >
-        <LoginPage />
-      </div>
-    );
+    return <LoginPage />;
   }
 
   const renderTabContent = () => {
@@ -59,6 +61,14 @@ export const App: React.FC = () => {
         return <DashboardPage onNavigate={setActiveTab} />;
       case "attendance":
         return <AttendancePage />;
+      case "schedules":
+        return <SchedulesPage />;
+      case "shifts":
+        return <ShiftsPage />;
+      case "overtime":
+        return <OvertimePage />;
+      case "reimbursements":
+        return <ReimbursementsPage />;
       case "payroll":
         return <PayrollPage />;
       case "leave":
@@ -67,12 +77,24 @@ export const App: React.FC = () => {
         return <KPIPage />;
       case "employees":
         return <EmployeesPage />;
+      case "branches":
+        return <BranchesPage />;
+      case "orgChart":
+        return <OrgChartPage />;
+      case "trainings":
+        return <TrainingsPage />;
+      case "offboarding":
+        return <OffboardingPage />;
+      case "recruitment":
+        return <RecruitmentPage />;
       case "assets":
         return <AssetsPage />;
       case "announcements":
         return <AnnouncementsPage />;
       case "roles":
         return <RolesPage />;
+      case "auditLogs":
+        return <AuditLogsPage />;
       case "settings":
         return <SettingsPage />;
       default:
@@ -96,7 +118,7 @@ export const App: React.FC = () => {
 
         {/* Right Main Content Area */}
         <div className="flex-1 flex flex-col h-full overflow-hidden" role="region" aria-label="Main HR Portal Workspace">
-          <Navbar onOpenActionModal={() => setActiveTab("attendance")} />
+          <Navbar onNavigate={setActiveTab} />
           <main className="flex-1 overflow-y-auto pr-1" role="main" id="main-content" aria-label="Tab Content View">
             {renderTabContent()}
           </main>

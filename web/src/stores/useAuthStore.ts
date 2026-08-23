@@ -1,4 +1,7 @@
 import { create } from 'zustand';
+import axios from 'axios';
+
+const API_BASE = 'http://localhost:5000/api/v1';
 
 export interface AuthUser {
   id: number;
@@ -23,7 +26,8 @@ interface AuthState {
   token: string | null;
   user: AuthUser | null;
   setAuth: (token: string, user: AuthUser) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
+  refreshAuth: () => Promise<boolean>;
   hasPermission: (permissionCode: string) => boolean;
 }
 
@@ -37,10 +41,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ token, user });
   },
 
-  logout: () => {
-    localStorage.removeItem('bluehr_token');
-    localStorage.removeItem('bluehr_user');
-    set({ token: null, user: null });
+  refreshAuth: async () => {
+    try {
+      const res = await axios.post(`${API_BASE}/auth/refresh`, {}, { withCredentials: true });
+      if (res.data.token && res.data.user) {
+        get().setAuth(res.data.token, res.data.user);
+        return true;
+      }
+      return false;
+    } catch (err) {
+      get().logout();
+      return false;
+    }
+  },
+
+  logout: async () => {
+    try {
+      await axios.post(`${API_BASE}/auth/logout`, {}, { withCredentials: true });
+    } catch (e) {
+      // Ignore logout errors
+    } finally {
+      localStorage.removeItem('bluehr_token');
+      localStorage.removeItem('bluehr_user');
+      set({ token: null, user: null });
+    }
   },
 
   hasPermission: (permissionCode: string) => {

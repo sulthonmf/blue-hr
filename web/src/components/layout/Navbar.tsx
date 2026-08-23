@@ -17,17 +17,22 @@ import {
   Megaphone,
   Calendar,
   Clock,
+  ChevronDown,
+  Users,
+  CreditCard,
 } from "lucide-react";
 
-export const Navbar: React.FC<{ onOpenActionModal?: () => void }> = ({
-  onOpenActionModal,
-}) => {
+export const Navbar: React.FC<{
+  onOpenActionModal?: () => void;
+  onNavigate?: (tab: string) => void;
+}> = ({ onOpenActionModal, onNavigate }) => {
   const { user, logout } = useAuthStore();
   const { notifications, markNotificationsRead } = useHRStore();
   const { theme, toggleTheme } = useThemeStore();
   const { lang, toggleLanguage, t } = useLanguageStore();
 
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -83,17 +88,72 @@ export const Navbar: React.FC<{ onOpenActionModal?: () => void }> = ({
           <span>{t.export}</span>
         </button>
 
-        {/* + Add new entry Button */}
-        {onOpenActionModal && (
+        {/* + Add new entry Quick Action Dropdown Button */}
+        <div className="relative">
           <button
-            onClick={onOpenActionModal}
+            onClick={() => setIsActionMenuOpen(!isActionMenuOpen)}
             aria-label="Tambah Data Baru"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-extrabold shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 transition-all cursor-pointer"
           >
             <Plus size={16} />
-            <span>{t.addNewEntry}</span>
+            <span>{t.addNewEntry || "Tambah Data Baru"}</span>
+            <ChevronDown size={14} className={`transition-transform ${isActionMenuOpen ? 'rotate-180' : ''}`} />
           </button>
-        )}
+
+          {isActionMenuOpen && (
+            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-50 p-2 space-y-1 font-sans text-xs animate-in fade-in zoom-in-95">
+              <p className="px-3 py-1.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">TINDAKAN CEPAT</p>
+              
+              <button
+                onClick={() => { onNavigate?.("employees"); setIsActionMenuOpen(false); }}
+                className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
+              >
+                <Users size={14} className="text-blue-600" />
+                <span>Registrasi Karyawan Baru</span>
+              </button>
+
+              <button
+                onClick={() => { onNavigate?.("attendance"); setIsActionMenuOpen(false); }}
+                className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
+              >
+                <Clock size={14} className="text-emerald-600" />
+                <span>Presensi & Absensi</span>
+              </button>
+
+              <button
+                onClick={() => { onNavigate?.("schedules"); setIsActionMenuOpen(false); }}
+                className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
+              >
+                <Calendar size={14} className="text-purple-600" />
+                <span>Pesan Ruang Rapat</span>
+              </button>
+
+              <button
+                onClick={() => { onNavigate?.("announcements"); setIsActionMenuOpen(false); }}
+                className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
+              >
+                <Megaphone size={14} className="text-amber-600" />
+                <span>Buat Pengumuman</span>
+              </button>
+
+              <button
+                onClick={() => { onNavigate?.("reimbursements"); setIsActionMenuOpen(false); }}
+                className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
+              >
+                <CreditCard size={14} className="text-cyan-600" />
+                <span>Klaim Reimbursement</span>
+              </button>
+
+              <button
+                onClick={() => { onNavigate?.("offboarding"); setIsActionMenuOpen(false); }}
+                className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
+              >
+                <LogOut size={14} className="text-rose-600" />
+                <span>Pengajuan Resign</span>
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Theme Toggle Pill */}
         <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-1 rounded-full shadow-sm">

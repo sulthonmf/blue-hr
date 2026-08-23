@@ -3,6 +3,7 @@ import { useHRStore } from '../stores/useHRStore';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useLanguageStore } from '../stores/useLanguageStore';
 import { NewEmployeeModal } from '../components/modules/NewEmployeeModal';
+import { ORGANIZATION_STRUCTURE } from '../utils/organizationData';
 import {
   Users, UserPlus, KeyRound, FileText, Shield, Search,
   Edit3, UserX, UserCheck, Loader2, X, Save, Phone,
@@ -433,37 +434,73 @@ export const EmployeesPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-500 font-semibold mb-1">Departemen</label>
-                  <input
-                    value={editForm.department}
-                    onChange={e => setEditForm({ ...editForm, department: e.target.value })}
+                  <label className="block text-slate-500 font-semibold mb-1">Direksi Penanggung Jawab *</label>
+                  <select
+                    value={editForm.directorate || ORGANIZATION_STRUCTURE[0].name}
+                    onChange={e => {
+                      const dirName = e.target.value;
+                      const dirObj = ORGANIZATION_STRUCTURE.find(d => d.name === dirName) || ORGANIZATION_STRUCTURE[0];
+                      const firstDiv = dirObj.divisions[0];
+                      const firstDept = firstDiv.departments[0];
+                      setEditForm({
+                        ...editForm,
+                        directorate: dirObj.name,
+                        division: firstDiv.name,
+                        department: firstDept.name
+                      });
+                    }}
                     className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2563eb]/40"
-                  />
+                  >
+                    {ORGANIZATION_STRUCTURE.map(d => (
+                      <option key={d.code} value={d.name}>{d.name}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-slate-500 font-semibold mb-1">Divisi *</label>
-                  <select
-                    value={editForm.division}
-                    onChange={e => setEditForm({ ...editForm, division: e.target.value })}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2563eb]/40"
-                  >
-                    <option value="Divisi Teknologi & Informasi">Divisi Teknologi & Informasi</option>
-                    <option value="Divisi Operasional & Logistik">Divisi Operasional & Logistik</option>
-                    <option value="Divisi Keuangan & SDM">Divisi Keuangan & SDM</option>
-                  </select>
+                  {(() => {
+                    const currentDir = ORGANIZATION_STRUCTURE.find(d => d.name === editForm.directorate) || ORGANIZATION_STRUCTURE[0];
+                    const availableDivs = currentDir.divisions;
+                    return (
+                      <select
+                        value={editForm.division || availableDivs[0].name}
+                        onChange={e => {
+                          const divName = e.target.value;
+                          const divObj = availableDivs.find(d => d.name === divName) || availableDivs[0];
+                          const firstDept = divObj.departments[0];
+                          setEditForm({
+                            ...editForm,
+                            division: divObj.name,
+                            department: firstDept.name
+                          });
+                        }}
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2563eb]/40"
+                      >
+                        {availableDivs.map(div => (
+                          <option key={div.code} value={div.name}>{div.name}</option>
+                        ))}
+                      </select>
+                    );
+                  })()}
                 </div>
                 <div>
-                  <label className="block text-slate-500 font-semibold mb-1">Direksi Penanggung Jawab *</label>
-                  <select
-                    value={editForm.directorate}
-                    onChange={e => setEditForm({ ...editForm, directorate: e.target.value })}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2563eb]/40"
-                  >
-                    <option value="Direktorat Utama">Direktorat Utama (CEO)</option>
-                    <option value="Direktorat Operasional">Direktorat Operasional (COO)</option>
-                    <option value="Direktorat Keuangan">Direktorat Keuangan (CFO)</option>
-                    <option value="Direktorat Teknologi & IT">Direktorat Teknologi & IT (CTO)</option>
-                  </select>
+                  <label className="block text-slate-500 font-semibold mb-1">Departemen *</label>
+                  {(() => {
+                    const currentDir = ORGANIZATION_STRUCTURE.find(d => d.name === editForm.directorate) || ORGANIZATION_STRUCTURE[0];
+                    const currentDiv = currentDir.divisions.find(div => div.name === editForm.division) || currentDir.divisions[0];
+                    const availableDepts = currentDiv.departments;
+                    return (
+                      <select
+                        value={editForm.department || availableDepts[0].name}
+                        onChange={e => setEditForm({ ...editForm, department: e.target.value })}
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2563eb]/40"
+                      >
+                        {availableDepts.map(dept => (
+                          <option key={dept.code} value={dept.name}>{dept.name}</option>
+                        ))}
+                      </select>
+                    );
+                  })()}
                 </div>
                 <div>
                   <label className="block text-slate-500 font-semibold mb-1">Nama Kontak Darurat</label>
@@ -507,54 +544,233 @@ export const EmployeesPage: React.FC = () => {
         </div>
       )}
 
-      {/* ---- Document Viewer (Clean SVG Icons Sesuai Gambar Referensi) ---- */}
+      {/* ---- Document Viewer & Upload Modal ---- */}
       {docEmp && (
-        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-extrabold text-slate-900 dark:text-white font-display">
-                Dokumen: {docEmp.name} ({docEmp.position})
-              </h3>
-              <button onClick={() => setDocEmp(null)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="space-y-2.5 text-xs">
-              {[
-                { title: 'KTP_Verified.pdf', desc: 'Kartu Tanda Penduduk Terverifikasi', icon: CreditCard, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/60' },
-                { title: 'NPWP_Karyawan.pdf', desc: 'Nomor Pokok Wajib Pajak', icon: FileCheck, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/60' },
-                { title: 'Kontrak_Kerja_PKWTT.pdf', desc: 'Perjanjian Kerja Waktu Tidak Tertentu', icon: FileText, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/60' },
-                { title: 'BPJS_Kesehatan.pdf', desc: 'Kartu BPJS Kesehatan', icon: Award, color: 'text-rose-500 bg-rose-50 dark:bg-rose-950/60' },
-              ].map((doc) => {
-                const IconComponent = doc.icon;
-                return (
-                  <div key={doc.title} className="p-3.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${doc.color}`}>
-                        <IconComponent size={18} />
-                      </div>
-                      <div>
-                        <h5 className="font-extrabold text-slate-900 dark:text-white">{doc.title}</h5>
-                        <p className="text-[10px] text-slate-500">{doc.desc}</p>
-                      </div>
-                    </div>
-                    <button className="text-[11px] text-[#2563eb] font-bold hover:underline">
-                      Preview
-                    </button>
-                  </div>
-                );
-              })}
-
-              <p className="text-[11px] text-slate-400 text-center mt-3">
-                Untuk upload dokumen baru, gunakan menu Dokumen HR
-              </p>
-            </div>
-          </div>
-        </div>
+        <DocumentManagementModal emp={docEmp} onClose={() => setDocEmp(null)} />
       )}
 
       <NewEmployeeModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
+    </div>
+  );
+};
+
+// Document Management Modal Component
+const DocumentManagementModal: React.FC<{ emp: any; onClose: () => void }> = ({ emp, onClose }) => {
+  const { fetchUserDocuments, uploadDocument, deleteDocument } = useHRStore();
+  const [documents, setDocuments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Form Upload state
+  const [docType, setDocType] = useState<'KTP' | 'NPWP' | 'CONTRACT' | 'BPJS' | 'CERTIFICATE' | 'OTHER'>('KTP');
+  const [title, setTitle] = useState('');
+  const [fileUrl, setFileUrl] = useState('');
+  const [fileName, setFileName] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [showUploadForm, setShowUploadForm] = useState(false);
+
+  const loadDocs = async () => {
+    setLoading(true);
+    const data = await fetchUserDocuments(emp.id);
+    setDocuments(data);
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    loadDocs();
+  }, [emp.id]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFileName(file.name);
+      if (!title) setTitle(file.name);
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        setFileUrl(evt.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title || !fileUrl) return;
+    setUploading(true);
+    try {
+      await uploadDocument({
+        user_id: emp.id,
+        doc_type: docType,
+        title,
+        file_url: fileUrl
+      });
+      setTitle('');
+      setFileUrl('');
+      setFileName('');
+      setShowUploadForm(false);
+      await loadDocs();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDeleteDoc = async (id: number) => {
+    if (window.confirm('Hapus dokumen ini?')) {
+      await deleteDocument(id, emp.id);
+      await loadDocs();
+    }
+  };
+
+  const getDocIcon = (type: string) => {
+    switch (type) {
+      case 'KTP':
+        return { icon: CreditCard, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/60' };
+      case 'NPWP':
+        return { icon: FileCheck, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/60' };
+      case 'CONTRACT':
+        return { icon: FileText, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/60' };
+      case 'BPJS':
+        return { icon: Award, color: 'text-rose-500 bg-rose-50 dark:bg-rose-950/60' };
+      default:
+        return { icon: Layers, color: 'text-slate-500 bg-slate-50 dark:bg-slate-950/60' };
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-extrabold text-slate-900 dark:text-white font-display">
+              Dokumen: {emp.name}
+            </h3>
+            <p className="text-xs text-slate-400">{emp.position} • {emp.department}</p>
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Upload Toggle Button */}
+        <div className="flex justify-between items-center">
+          <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+            Daftar Dokumen ({documents.length})
+          </span>
+          <button
+            onClick={() => setShowUploadForm(!showUploadForm)}
+            className="px-3 py-1.5 bg-[#2563eb] text-white text-xs font-bold rounded-xl shadow hover:bg-blue-700 flex items-center gap-1.5 transition-all"
+          >
+            {showUploadForm ? 'Tutup Upload' : '+ Upload Dokumen'}
+          </button>
+        </div>
+
+        {/* Form Upload */}
+        {showUploadForm && (
+          <form onSubmit={handleUploadSubmit} className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 text-xs">
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Jenis Dokumen</label>
+                <select
+                  value={docType}
+                  onChange={(e) => setDocType(e.target.value as any)}
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-medium"
+                >
+                  <option value="KTP">KTP (Identitas)</option>
+                  <option value="NPWP">NPWP (Pajak)</option>
+                  <option value="CONTRACT">Kontrak PKWTT/PKWT</option>
+                  <option value="BPJS">Kartu BPJS</option>
+                  <option value="CERTIFICATE">Sertifikat</option>
+                  <option value="OTHER">Lainnya</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Judul Dokumen</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="KTP_Terverifikasi.pdf"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Pilih File (PDF, PNG, JPG)</label>
+              <input
+                type="file"
+                accept=".pdf,.png,.jpg,.jpeg"
+                onChange={handleFileChange}
+                className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+              />
+              {fileName && <p className="text-[10px] text-emerald-600 dark:text-emerald-400 mt-1 font-bold">Terpilih: {fileName}</p>}
+            </div>
+
+            <div className="flex justify-end gap-2 pt-1">
+              <button
+                type="submit"
+                disabled={uploading || !fileUrl}
+                className="px-4 py-2 bg-[#2563eb] text-white text-xs font-bold rounded-xl shadow hover:bg-blue-700 disabled:opacity-50"
+              >
+                {uploading ? 'Mengunggah...' : 'Simpan Dokumen'}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Documents List */}
+        <div className="space-y-2 max-h-64 overflow-y-auto pr-1 text-xs">
+          {loading ? (
+            <div className="p-6 text-center text-slate-400 flex items-center justify-center gap-2">
+              <Loader2 size={16} className="animate-spin" />
+              <span>Memuat dokumen...</span>
+            </div>
+          ) : documents.length === 0 ? (
+            <div className="p-6 text-center text-slate-400 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+              Belum ada dokumen diunggah untuk karyawan ini.
+            </div>
+          ) : (
+            documents.map((doc) => {
+              const { icon: IconComponent, color } = getDocIcon(doc.doc_type);
+              return (
+                <div key={doc.id} className="p-3.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${color}`}>
+                      <IconComponent size={18} />
+                    </div>
+                    <div>
+                      <h5 className="font-extrabold text-slate-900 dark:text-white">{doc.title}</h5>
+                      <span className="text-[10px] text-slate-400 font-bold px-2 py-0.5 bg-slate-200/60 dark:bg-slate-800 rounded-md mr-2">
+                        {doc.doc_type}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <a
+                      href={doc.file_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[11px] text-[#2563eb] font-bold hover:underline"
+                    >
+                      Pratinjau
+                    </a>
+                    <button
+                      onClick={() => handleDeleteDoc(doc.id)}
+                      className="text-[11px] text-rose-500 font-bold hover:underline"
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
     </div>
   );
 };

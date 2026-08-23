@@ -7,25 +7,29 @@ import { useThemeStore } from '../stores/useThemeStore';
 import { useLanguageStore } from '../stores/useLanguageStore';
 import { LocationSimulator } from '../components/modules/LocationSimulator';
 import {
+  QuickHRActionsWidget,
   HolidayNoticeCard,
   AttendanceTimelineWidget,
   LeaveDonutSummaryCard,
   WorkingHoursBarChartCard,
   TravelOnDutyBanner,
   HRLeaveApprovalCard,
-  TeamMembersRibbon
+  TeamMembersRibbon,
+  MeetingScheduleWidget
 } from '../components/modules/DashboardWidgets';
 
 interface HomeScreenProps {
   onOpenClockInModal: () => void;
   onOpenLeaveModal: () => void;
   onOpenAnnouncementModal?: () => void;
+  onNavigate?: (tab: string) => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ 
   onOpenClockInModal, 
   onOpenLeaveModal,
-  onOpenAnnouncementModal 
+  onOpenAnnouncementModal,
+  onNavigate
 }) => {
   const { user } = useAuthStore();
   const { todayAttendance } = useHRStore();
@@ -39,49 +43,55 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* 1. GPS Geofence Location Simulator */}
       <LocationSimulator />
 
-      {/* 2. Primary Action Bar (Clock In / Status) */}
+      {/* 2. Quick HR Actions Widget (6-tile Grid matching Web Version) */}
+      <QuickHRActionsWidget onNavigate={onNavigate} />
+
+      {/* 3. Primary Action Bar (Clock In / Status) */}
       <View style={[styles.bannerCard, todayAttendance ? styles.bannerGreen : styles.bannerBlue]}>
         <View style={styles.bannerRow}>
-          <View>
-            <Text style={styles.bannerSub}>Presensi Geofence GPS</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.bannerSub}>{t.geofenceTitle || 'Presensi Geofence GPS'}</Text>
             <Text style={styles.bannerTitle}>
-              {todayAttendance ? `Sudah Clock In (${todayAttendance.status})` : 'Belum Melakukan Presensi'}
+              {todayAttendance ? `${t.clockInSuccessStatus || 'Sudah Clock In'} (${todayAttendance.status})` : (t.notClockedInYet || 'Belum Melakukan Presensi')}
             </Text>
             <Text style={styles.bannerTime}>
               {todayAttendance?.check_in
                 ? `Masuk: ${new Date(todayAttendance.check_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-                : 'Silakan absen dalam radius kantor 5 km'}
+                : (t.clockInHint || 'Silakan absen dalam radius kantor 5 km')}
             </Text>
           </View>
 
           {!todayAttendance && (
             <TouchableOpacity onPress={onOpenClockInModal} style={styles.clockInBtn}>
               <Feather name="map-pin" size={14} color="#2563eb" />
-              <Text style={styles.clockInBtnText}>Absen Now</Text>
+              <Text style={styles.clockInBtnText}>{t.clockInBtnText || 'Absen Sekarang'}</Text>
             </TouchableOpacity>
           )}
         </View>
       </View>
 
-      {/* 3. Holiday & Company Notice Card (Connected to Backend HR Announcements) */}
+      {/* 4. Meeting Schedule & Room Reservation Widget */}
+      <MeetingScheduleWidget />
+
+      {/* 5. Holiday & Company Notice Card (Connected to Backend HR Announcements) */}
       <HolidayNoticeCard onOpenDetail={onOpenAnnouncementModal} />
 
-      {/* 4. Attendance Timeline Widget (From Reference Image) */}
+      {/* 6. Attendance Timeline Widget (Check-in, Check-out, Total Hours) */}
       <AttendanceTimelineWidget />
 
-      {/* 5. Working Hours Bar Chart (From Reference Image) */}
+      {/* 7. Working Hours Bar Chart */}
       <WorkingHoursBarChartCard />
 
-      {/* 6. Leave Ring Donut Summary (From Reference Image) */}
+      {/* 8. Leave Ring Donut Summary */}
       <LeaveDonutSummaryCard />
 
-      {/* 7. Travel on Duty Banner (From Reference Image) */}
+      {/* 9. Travel on Duty Banner */}
       <TravelOnDutyBanner />
 
-      {/* 8. HR / Manager Leave Approval Card (For HR / Admin Users) */}
+      {/* 10. HR / Manager Leave Approval Card (For HR / Admin Users) */}
       <HRLeaveApprovalCard />
 
-      {/* 9. Team Members Ribbon (From Reference Image) */}
+      {/* 11. Team Members Ribbon */}
       <TeamMembersRibbon />
     </ScrollView>
   );

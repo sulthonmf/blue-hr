@@ -2,19 +2,25 @@ import React, { useState } from 'react';
 import { useHRStore } from '../../stores/useHRStore';
 import { useLanguageStore } from '../../stores/useLanguageStore';
 import { UserPlus, X, Upload, Camera } from 'lucide-react';
+import { ORGANIZATION_STRUCTURE } from '../../utils/organizationData';
 
 export const NewEmployeeModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const { roles, registerEmployee } = useHRStore();
   const { t } = useLanguageStore();
+
+  const defaultDir = ORGANIZATION_STRUCTURE[1] || ORGANIZATION_STRUCTURE[0];
+  const defaultDiv = defaultDir.divisions[0];
+  const defaultDept = defaultDiv.departments[0];
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: 'password123',
     role_id: 3,
     position: '',
-    department: 'Dept Backend Engineering',
-    division: 'Divisi Teknologi & Informasi',
-    directorate: 'Direktorat Utama',
+    department: defaultDept.name,
+    division: defaultDiv.name,
+    directorate: defaultDir.name,
     phone: '',
     address: '',
     emergency_contact_name: '',
@@ -26,6 +32,36 @@ export const NewEmployeeModal: React.FC<{ isOpen: boolean; onClose: () => void }
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
+
+  // Selected Directorate Object
+  const selectedDirObj = ORGANIZATION_STRUCTURE.find(d => d.name === formData.directorate) || ORGANIZATION_STRUCTURE[0];
+  const availableDivisions = selectedDirObj.divisions;
+  
+  // Selected Division Object
+  const selectedDivObj = availableDivisions.find(div => div.name === formData.division) || availableDivisions[0];
+  const availableDepartments = selectedDivObj.departments;
+
+  const handleDirectorateChange = (dirName: string) => {
+    const dirObj = ORGANIZATION_STRUCTURE.find(d => d.name === dirName) || ORGANIZATION_STRUCTURE[0];
+    const firstDiv = dirObj.divisions[0];
+    const firstDept = firstDiv.departments[0];
+    setFormData(prev => ({
+      ...prev,
+      directorate: dirObj.name,
+      division: firstDiv.name,
+      department: firstDept.name
+    }));
+  };
+
+  const handleDivisionChange = (divName: string) => {
+    const divObj = availableDivisions.find(d => d.name === divName) || availableDivisions[0];
+    const firstDept = divObj.departments[0];
+    setFormData(prev => ({
+      ...prev,
+      division: divObj.name,
+      department: firstDept.name
+    }));
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -143,13 +179,12 @@ export const NewEmployeeModal: React.FC<{ isOpen: boolean; onClose: () => void }
               <select
                 id="emp-directorate"
                 value={formData.directorate}
-                onChange={(e) => setFormData({ ...formData, directorate: e.target.value })}
+                onChange={(e) => handleDirectorateChange(e.target.value)}
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2563eb]/40"
               >
-                <option value="Direktorat Utama">Direktorat Utama (CEO)</option>
-                <option value="Direktorat Operasional">Direktorat Operasional (COO)</option>
-                <option value="Direktorat Keuangan">Direktorat Keuangan (CFO)</option>
-                <option value="Direktorat Teknologi & IT">Direktorat Teknologi & IT (CTO)</option>
+                {ORGANIZATION_STRUCTURE.map((d) => (
+                  <option key={d.code} value={d.name}>{d.name}</option>
+                ))}
               </select>
             </div>
 
@@ -158,26 +193,27 @@ export const NewEmployeeModal: React.FC<{ isOpen: boolean; onClose: () => void }
               <select
                 id="emp-division"
                 value={formData.division}
-                onChange={(e) => setFormData({ ...formData, division: e.target.value })}
+                onChange={(e) => handleDivisionChange(e.target.value)}
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2563eb]/40"
               >
-                <option value="Divisi Teknologi & Informasi">Divisi Teknologi & Informasi</option>
-                <option value="Divisi Operasional & Logistik">Divisi Operasional & Logistik</option>
-                <option value="Divisi Keuangan & SDM">Divisi Keuangan & SDM</option>
+                {availableDivisions.map((div) => (
+                  <option key={div.code} value={div.name}>{div.name}</option>
+                ))}
               </select>
             </div>
 
             <div>
               <label htmlFor="emp-department" className="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Departemen *</label>
-              <input
+              <select
                 id="emp-department"
-                type="text"
-                required
-                placeholder="Dept Backend / HR"
                 value={formData.department}
                 onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2563eb]/40"
-              />
+              >
+                {availableDepartments.map((dept) => (
+                  <option key={dept.code} value={dept.name}>{dept.name}</option>
+                ))}
+              </select>
             </div>
           </div>
 

@@ -1,8 +1,16 @@
 import { describe, it, expect, vi } from 'vitest';
 
-// Mock react-native before importing stores
+// Mock react-native and async-storage before importing stores
 vi.mock('react-native', () => ({
   Platform: { OS: 'ios' }
+}));
+
+vi.mock('@react-native-async-storage/async-storage', () => ({
+  default: {
+    getItem: vi.fn().mockResolvedValue(null),
+    setItem: vi.fn().mockResolvedValue(undefined),
+    removeItem: vi.fn().mockResolvedValue(undefined),
+  }
 }));
 
 import { useLanguageStore } from '../stores/useLanguageStore';
