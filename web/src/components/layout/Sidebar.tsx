@@ -57,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
         { id: 'helpdesk', label: t.helpdeskTitle, icon: LifeBuoy, perm: null },
         { id: 'branches', label: 'Cabang Perusahaan', icon: Building2, perm: null },
         { id: 'recruitment', label: 'Perekrutan (ATS)', icon: UserPlus, perm: 'manage_users' },
-        { id: 'offboarding', label: 'Offboarding & SP', icon: UserX, perm: null },
+        { id: 'offboarding', label: 'Offboarding & SP', icon: UserX, perm: 'manage_users' },
         { id: 'trainings', label: 'Pelatihan & Sertifikat', icon: GraduationCap, perm: null },
         { id: 'kpi', label: t.kpi, icon: Award, perm: null },
       ]

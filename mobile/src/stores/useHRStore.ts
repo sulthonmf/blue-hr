@@ -8,6 +8,7 @@ interface HRState {
   leaves: LeaveRequest[];
   announcements: AnnouncementItem[];
   teamMembers: User[];
+  employees: User[];
   branches: any[];
   notifications: NotificationItem[];
   settings: Settings;
@@ -56,6 +57,7 @@ export const useHRStore = create<HRState>((set, get) => ({
   leaves: [],
   announcements: [],
   teamMembers: [],
+  employees: [],
   branches: [],
   overtimes: [],
   reimbursements: [],
@@ -177,6 +179,7 @@ export const useHRStore = create<HRState>((set, get) => ({
         leaves: leaveRes.status === 'fulfilled' ? leaveRes.value.data : [],
         announcements: annRes.status === 'fulfilled' ? annRes.value.data : [],
         teamMembers: teamRes.status === 'fulfilled' ? teamRes.value.data : [],
+        employees: teamRes.status === 'fulfilled' ? teamRes.value.data : [],
         branches: branchRes.status === 'fulfilled' ? branchRes.value.data : [],
         overtimes: otRes.status === 'fulfilled' ? otRes.value.data : [],
         reimbursements: reimbRes.status === 'fulfilled' ? reimbRes.value.data : [],

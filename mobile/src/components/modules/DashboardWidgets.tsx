@@ -1024,17 +1024,21 @@ const styles = StyleSheet.create({
 export const QuickHRActionsWidget: React.FC<{
   onNavigate?: (tab: string) => void;
 }> = ({ onNavigate }) => {
+  const { user } = useAuthStore();
   const { theme } = useThemeStore();
   const { t } = useLanguageStore();
   const isDark = theme === "dark";
 
-  const actions = [
+  const isHR = user?.permissions?.includes("manage_users") || user?.role_name === "Admin" || user?.role_name === "HR Manager";
+
+  const allActions = [
     {
       key: "employees",
       title: t.addEmployee || "Karyawan",
       icon: "users",
       color: "#2563eb",
       bg: "rgba(37, 99, 235, 0.12)",
+      isHR: false,
     },
     {
       key: "attendance",
@@ -1042,6 +1046,7 @@ export const QuickHRActionsWidget: React.FC<{
       icon: "clock",
       color: "#059669",
       bg: "rgba(5, 150, 105, 0.12)",
+      isHR: false,
     },
     {
       key: "schedules",
@@ -1049,6 +1054,7 @@ export const QuickHRActionsWidget: React.FC<{
       icon: "calendar",
       color: "#9333ea",
       bg: "rgba(147, 51, 234, 0.12)",
+      isHR: false,
     },
     {
       key: "announcements",
@@ -1056,6 +1062,7 @@ export const QuickHRActionsWidget: React.FC<{
       icon: "volume-2",
       color: "#d97706",
       bg: "rgba(217, 119, 6, 0.12)",
+      isHR: false,
     },
     {
       key: "reimbursements",
@@ -1063,6 +1070,7 @@ export const QuickHRActionsWidget: React.FC<{
       icon: "credit-card",
       color: "#0891b2",
       bg: "rgba(8, 145, 178, 0.12)",
+      isHR: false,
     },
     {
       key: "offboarding",
@@ -1070,8 +1078,11 @@ export const QuickHRActionsWidget: React.FC<{
       icon: "log-out",
       color: "#e11d48",
       bg: "rgba(225, 29, 72, 0.12)",
+      isHR: true,
     },
   ];
+
+  const actions = allActions.filter((act) => !act.isHR || isHR);
 
   return (
     <View

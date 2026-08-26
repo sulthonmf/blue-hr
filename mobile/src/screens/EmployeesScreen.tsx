@@ -6,7 +6,7 @@ import { useThemeStore } from '../stores/useThemeStore';
 import { useLanguageStore } from '../stores/useLanguageStore';
 
 export const EmployeesScreen: React.FC = () => {
-  const { employees } = useHRStore();
+  const { employees = [], teamMembers = [] } = useHRStore();
   const { theme } = useThemeStore();
   const { t } = useLanguageStore();
   const [search, setSearch] = useState('');
@@ -14,14 +14,18 @@ export const EmployeesScreen: React.FC = () => {
 
   const isDark = theme === 'dark';
 
-  const departments = ['ALL', ...Array.from(new Set(employees.map((e) => e.department).filter(Boolean)))];
+  const rawList = employees && employees.length > 0 ? employees : teamMembers;
+  const empList = Array.isArray(rawList) ? rawList : [];
 
-  const filtered = employees.filter((emp) => {
+  const departments = ['ALL', ...Array.from(new Set(empList.map((e) => e?.department).filter(Boolean)))];
+
+  const filtered = empList.filter((emp) => {
+    if (!emp) return false;
     const matchSearch =
-      emp.name.toLowerCase().includes(search.toLowerCase()) ||
-      emp.email.toLowerCase().includes(search.toLowerCase()) ||
-      emp.position.toLowerCase().includes(search.toLowerCase()) ||
-      emp.department.toLowerCase().includes(search.toLowerCase());
+      (emp.name || '').toLowerCase().includes(search.toLowerCase()) ||
+      (emp.email || '').toLowerCase().includes(search.toLowerCase()) ||
+      (emp.position || '').toLowerCase().includes(search.toLowerCase()) ||
+      (emp.department || '').toLowerCase().includes(search.toLowerCase());
     const matchDept = filterDept === 'ALL' || emp.department === filterDept;
     return matchSearch && matchDept;
   });
@@ -34,7 +38,7 @@ export const EmployeesScreen: React.FC = () => {
           {t.employees || 'Direktori Karyawan'}
         </Text>
         <Text style={styles.subtitle}>
-          Total {employees.length} Karyawan Terdaftar Perusahaan
+          Total {empList.length} Karyawan Terdaftar Perusahaan
         </Text>
       </View>
 
