@@ -40,21 +40,21 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ isInitializing: false });
     }
   },
-  setAuth: (token, user, refreshToken) => {
+  setAuth: async (token, user, refreshToken) => {
     setAuthToken(token);
-    storage.setItem('bluehr_mobile_token', token);
-    if (refreshToken) {
-      storage.setItem('bluehr_mobile_refresh_token', refreshToken);
-    }
-    storage.setItem('bluehr_mobile_user', JSON.stringify(user));
     set((state) => ({ token, user, refreshToken: refreshToken || state.refreshToken }));
+    await storage.setItem('bluehr_mobile_token', token);
+    if (refreshToken) {
+      await storage.setItem('bluehr_mobile_refresh_token', refreshToken);
+    }
+    await storage.setItem('bluehr_mobile_user', JSON.stringify(user));
   },
-  logout: () => {
+  logout: async () => {
     setAuthToken(null);
-    storage.removeItem('bluehr_mobile_token');
-    storage.removeItem('bluehr_mobile_refresh_token');
-    storage.removeItem('bluehr_mobile_user');
     set({ token: null, refreshToken: null, user: null });
+    await storage.removeItem('bluehr_mobile_token');
+    await storage.removeItem('bluehr_mobile_refresh_token');
+    await storage.removeItem('bluehr_mobile_user');
   },
 }));
 
