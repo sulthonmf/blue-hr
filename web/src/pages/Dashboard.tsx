@@ -49,8 +49,12 @@ export const DashboardPage: React.FC<{ onNavigate: (tab: string) => void }> = ({
 
   // Dynamic Attendance Rate Calculation based on selected Time Filter
   const totalEmp = employees.length || 1;
-  const realPresent = attendanceLogs.filter((a: any) => a.check_in || a.clock_in).length;
-  const realOnTime = attendanceLogs.filter((a: any) => a.notes !== "LATE").length;
+  const realPresent = attendanceLogs.filter(
+    (a: any) => a.check_in || a.clock_in,
+  ).length;
+  const realOnTime = attendanceLogs.filter(
+    (a: any) => a.notes !== "LATE",
+  ).length;
   const realLate = attendanceLogs.filter((a: any) => a.notes === "LATE").length;
 
   let presentCount = realPresent;
@@ -83,11 +87,19 @@ export const DashboardPage: React.FC<{ onNavigate: (tab: string) => void }> = ({
           no: idx + 1,
           name: log.user_name || user?.name || "Karyawan",
           pos: log.position || log.user_position || "Staff",
-          date: log.date || (log.check_in ? new Date(log.check_in).toLocaleDateString("id-ID") : new Date().toLocaleDateString("id-ID")),
-          status: (log.check_out || log.clock_out) ? "Selesai (Clock Out)" : "Hadir (Clock In)",
-          color: (log.check_out || log.clock_out)
-            ? "bg-[#4D96FF]/15 text-[#4D96FF]"
-            : "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400",
+          date:
+            log.date ||
+            (log.check_in
+              ? new Date(log.check_in).toLocaleDateString("id-ID")
+              : new Date().toLocaleDateString("id-ID")),
+          status:
+            log.check_out || log.clock_out
+              ? "Selesai (Clock Out)"
+              : "Hadir (Clock In)",
+          color:
+            log.check_out || log.clock_out
+              ? "bg-[#4D96FF]/15 text-[#4D96FF]"
+              : "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400",
         }))
       : [
           {
@@ -142,10 +154,17 @@ export const DashboardPage: React.FC<{ onNavigate: (tab: string) => void }> = ({
       <div className="bg-white dark:bg-slate-900 p-6 rounded-[32px] border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-extrabold text-slate-900 dark:text-white font-display">{t.quickActions || "Aksi Cepat & Navigasi HR"}</h3>
-            <p className="text-xs text-slate-400">{t.quickActionsSub || "Pintas pembuatan data & navigasi operasional HRIS"}</p>
+            <h3 className="text-base font-extrabold text-slate-900 dark:text-white font-display">
+              {t.quickActions || "Aksi Cepat & Navigasi HR"}
+            </h3>
+            <p className="text-xs text-slate-400">
+              {t.quickActionsSub ||
+                "Pintas pembuatan data & navigasi operasional HRIS"}
+            </p>
           </div>
-          <span className="px-3 py-1 bg-blue-50 dark:bg-blue-950/80 text-[#2563eb] text-xs font-bold rounded-full">6 Modul Utama</span>
+          <span className="px-3 py-1 bg-blue-50 dark:bg-blue-950/80 text-[#2563eb] text-xs font-bold rounded-full">
+            6 Modul Utama
+          </span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -157,8 +176,12 @@ export const DashboardPage: React.FC<{ onNavigate: (tab: string) => void }> = ({
               <Users size={18} />
             </div>
             <div>
-              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">{t.addEmployee || "Tambah Karyawan"}</h4>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">Registrasi akun baru</p>
+              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">
+                {t.addEmployee || "Tambah Karyawan"}
+              </h4>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                Registrasi akun baru
+              </p>
             </div>
           </button>
 
@@ -170,8 +193,12 @@ export const DashboardPage: React.FC<{ onNavigate: (tab: string) => void }> = ({
               <Clock size={18} />
             </div>
             <div>
-              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">{t.attendance || "Presensi & Log"}</h4>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">Clock In / Out</p>
+              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">
+                {t.attendance || "Presensi & Log"}
+              </h4>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                Clock In / Out
+              </p>
             </div>
           </button>
 
@@ -183,8 +210,12 @@ export const DashboardPage: React.FC<{ onNavigate: (tab: string) => void }> = ({
               <Calendar size={18} />
             </div>
             <div>
-              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">{t.bookRoom || "Pesan Ruangan"}</h4>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">Agenda & Meeting</p>
+              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">
+                {t.bookRoom || "Pesan Ruangan"}
+              </h4>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                Agenda & Meeting
+              </p>
             </div>
           </button>
 
@@ -196,8 +227,12 @@ export const DashboardPage: React.FC<{ onNavigate: (tab: string) => void }> = ({
               <Megaphone size={18} />
             </div>
             <div>
-              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">{t.announcements || "Pengumuman"}</h4>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">Buat info tim</p>
+              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">
+                {t.announcements || "Pengumuman"}
+              </h4>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                Buat info tim
+              </p>
             </div>
           </button>
 
@@ -209,8 +244,12 @@ export const DashboardPage: React.FC<{ onNavigate: (tab: string) => void }> = ({
               <CreditCard size={18} />
             </div>
             <div>
-              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">{t.claimReimbursement || "Reimbursement"}</h4>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">Klaim biaya</p>
+              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">
+                {t.claimReimbursement || "Reimbursement"}
+              </h4>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                Klaim biaya
+              </p>
             </div>
           </button>
 
@@ -222,15 +261,16 @@ export const DashboardPage: React.FC<{ onNavigate: (tab: string) => void }> = ({
               <LogOut size={18} />
             </div>
             <div>
-              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">{t.offboarding || "Offboarding"}</h4>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">Resign & SP</p>
+              <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-display">
+                {t.offboarding || "Offboarding"}
+              </h4>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                Resign & SP
+              </p>
             </div>
           </button>
         </div>
       </div>
-
-      {/* Geofencing Location Simulator */}
-      <LocationSimulator />
 
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

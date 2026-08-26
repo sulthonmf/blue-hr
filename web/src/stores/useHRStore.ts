@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import { apiClient } from '../api/client';
 import { useAuthStore } from './useAuthStore';
 
 const API_BASE = 'http://localhost:5000/api/v1';
@@ -436,38 +436,38 @@ export const useHRStore = create<HRState>((set, get) => ({
 
   requestResignation: async (payload) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/offboarding/resignations`, payload, headers);
+    await apiClient.post(`${API_BASE}/offboarding/resignations`, payload, headers);
     await get().fetchData();
   },
 
   updateResignationStatus: async (id, status, notes) => {
     const headers = getAuthHeaders();
-    await axios.patch(`${API_BASE}/offboarding/resignations/${id}/status`, { status, notes }, headers);
+    await apiClient.patch(`${API_BASE}/offboarding/resignations/${id}/status`, { status, notes }, headers);
     await get().fetchData();
   },
 
   issueWarning: async (payload) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/offboarding/warnings`, payload, headers);
+    await apiClient.post(`${API_BASE}/offboarding/warnings`, payload, headers);
     await get().fetchData();
   },
 
   addTraining: async (payload) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/trainings`, payload, headers);
+    await apiClient.post(`${API_BASE}/trainings`, payload, headers);
     await get().fetchData();
   },
 
   deleteTraining: async (id) => {
     const headers = getAuthHeaders();
-    await axios.delete(`${API_BASE}/trainings/${id}`, headers);
+    await apiClient.delete(`${API_BASE}/trainings/${id}`, headers);
     await get().fetchData();
   },
 
   fetchOrgTree: async () => {
     try {
       const headers = getAuthHeaders();
-      const res = await axios.get(`${API_BASE}/org-chart`, headers);
+      const res = await apiClient.get(`${API_BASE}/org-chart`, headers);
       set({ orgTree: res.data || [] });
     } catch (e) {
       console.error('Failed to fetch org tree', e);
@@ -477,7 +477,7 @@ export const useHRStore = create<HRState>((set, get) => ({
   fetchMeetingRooms: async () => {
     try {
       const headers = getAuthHeaders();
-      const res = await axios.get(`${API_BASE}/meeting-rooms`, headers);
+      const res = await apiClient.get(`${API_BASE}/meeting-rooms`, headers);
       set({ meetingRooms: res.data || [] });
     } catch (e) {
       console.error('Failed to fetch meeting rooms', e);
@@ -487,7 +487,7 @@ export const useHRStore = create<HRState>((set, get) => ({
   fetchSchedules: async () => {
     try {
       const headers = getAuthHeaders();
-      const res = await axios.get(`${API_BASE}/schedules`, headers);
+      const res = await apiClient.get(`${API_BASE}/schedules`, headers);
       set({ schedules: res.data || [] });
     } catch (e) {
       console.error('Failed to fetch schedules', e);
@@ -496,26 +496,26 @@ export const useHRStore = create<HRState>((set, get) => ({
 
   reserveRoom: async (payload) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/schedules`, payload, headers);
+    await apiClient.post(`${API_BASE}/schedules`, payload, headers);
     await get().fetchData();
   },
 
   createMeetingRoom: async (roomData) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/meeting-rooms`, roomData, headers);
+    await apiClient.post(`${API_BASE}/meeting-rooms`, roomData, headers);
     await get().fetchData();
   },
 
   cancelSchedule: async (id) => {
     const headers = getAuthHeaders();
-    await axios.delete(`${API_BASE}/schedules/${id}`, headers);
+    await apiClient.delete(`${API_BASE}/schedules/${id}`, headers);
     await get().fetchData();
   },
 
   fetchBranches: async () => {
     try {
       const headers = getAuthHeaders();
-      const res = await axios.get(`${API_BASE}/branches`, headers);
+      const res = await apiClient.get(`${API_BASE}/branches`, headers);
       set({ branches: res.data || [] });
     } catch (e) {
       console.error('Failed to fetch branches', e);
@@ -524,97 +524,97 @@ export const useHRStore = create<HRState>((set, get) => ({
 
   createBranch: async (branchData) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/branches`, branchData, headers);
+    await apiClient.post(`${API_BASE}/branches`, branchData, headers);
     await get().fetchBranches();
   },
 
   updateBranch: async (id, branchData) => {
     const headers = getAuthHeaders();
-    await axios.put(`${API_BASE}/branches/${id}`, branchData, headers);
+    await apiClient.put(`${API_BASE}/branches/${id}`, branchData, headers);
     await get().fetchBranches();
   },
 
   deleteBranch: async (id) => {
     const headers = getAuthHeaders();
-    await axios.delete(`${API_BASE}/branches/${id}`, headers);
+    await apiClient.delete(`${API_BASE}/branches/${id}`, headers);
     await get().fetchBranches();
   },
 
   createShift: async (shiftData) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/shifts`, shiftData, headers);
+    await apiClient.post(`${API_BASE}/shifts`, shiftData, headers);
     await get().fetchData();
   },
 
   updateShift: async (id, shiftData) => {
     const headers = getAuthHeaders();
-    await axios.put(`${API_BASE}/shifts/${id}`, shiftData, headers);
+    await apiClient.put(`${API_BASE}/shifts/${id}`, shiftData, headers);
     await get().fetchData();
   },
 
   deleteShift: async (id) => {
     const headers = getAuthHeaders();
-    await axios.delete(`${API_BASE}/shifts/${id}`, headers);
+    await apiClient.delete(`${API_BASE}/shifts/${id}`, headers);
     await get().fetchData();
   },
 
   requestOvertime: async (payload) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/overtime`, payload, headers);
+    await apiClient.post(`${API_BASE}/overtime`, payload, headers);
     await get().fetchData();
   },
 
   approveOvertime: async (id) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/overtime/${id}/approve`, {}, headers);
+    await apiClient.post(`${API_BASE}/overtime/${id}/approve`, {}, headers);
     await get().fetchData();
   },
 
   rejectOvertime: async (id) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/overtime/${id}/reject`, {}, headers);
+    await apiClient.post(`${API_BASE}/overtime/${id}/reject`, {}, headers);
     await get().fetchData();
   },
 
   requestReimbursement: async (payload) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/reimbursements`, payload, headers);
+    await apiClient.post(`${API_BASE}/reimbursements`, payload, headers);
     await get().fetchData();
   },
 
   approveReimbursement: async (id) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/reimbursements/${id}/approve`, {}, headers);
+    await apiClient.post(`${API_BASE}/reimbursements/${id}/approve`, {}, headers);
     await get().fetchData();
   },
 
   rejectReimbursement: async (id) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/reimbursements/${id}/reject`, {}, headers);
+    await apiClient.post(`${API_BASE}/reimbursements/${id}/reject`, {}, headers);
     await get().fetchData();
   },
 
   createJobPosting: async (jobData) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/recruitment/jobs`, jobData, headers);
+    await apiClient.post(`${API_BASE}/recruitment/jobs`, jobData, headers);
     await get().fetchData();
   },
 
   applyJob: async (applicantData) => {
-    await axios.post(`${API_BASE}/recruitment/applicants`, applicantData);
+    await apiClient.post(`${API_BASE}/recruitment/applicants`, applicantData);
     await get().fetchData();
   },
 
   updateApplicantStatus: async (id, status) => {
     const headers = getAuthHeaders();
-    await axios.patch(`${API_BASE}/recruitment/applicants/${id}/status`, { status }, headers);
+    await apiClient.patch(`${API_BASE}/recruitment/applicants/${id}/status`, { status }, headers);
     await get().fetchData();
   },
 
   fetchAuditLogs: async () => {
     try {
       const headers = getAuthHeaders();
-      const res = await axios.get(`${API_BASE}/audit-logs`, headers);
+      const res = await apiClient.get(`${API_BASE}/audit-logs`, headers);
       set({ auditLogs: res.data || [] });
     } catch (e) {
       console.error('Failed to fetch audit logs', e);
@@ -624,7 +624,7 @@ export const useHRStore = create<HRState>((set, get) => ({
   fetchUserDocuments: async (userId) => {
     try {
       const headers = getAuthHeaders();
-      const res = await axios.get(`${API_BASE}/documents/${userId}`, headers);
+      const res = await apiClient.get(`${API_BASE}/documents/${userId}`, headers);
       return res.data || [];
     } catch (e) {
       console.error('Failed to fetch user documents', e);
@@ -634,18 +634,18 @@ export const useHRStore = create<HRState>((set, get) => ({
 
   uploadDocument: async (docData) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/documents`, docData, headers);
+    await apiClient.post(`${API_BASE}/documents`, docData, headers);
   },
 
   deleteDocument: async (id, userId) => {
     const headers = getAuthHeaders();
-    await axios.delete(`${API_BASE}/documents/${id}`, headers);
+    await apiClient.delete(`${API_BASE}/documents/${id}`, headers);
   },
 
   fetchNotifications: async () => {
     try {
       const headers = getAuthHeaders();
-      const res = await axios.get(`${API_BASE}/notifications`, headers);
+      const res = await apiClient.get(`${API_BASE}/notifications`, headers);
       set({ notifications: res.data || [] });
     } catch (e) {
       console.error('Failed to fetch notifications', e);
@@ -655,7 +655,7 @@ export const useHRStore = create<HRState>((set, get) => ({
   markNotificationsRead: async () => {
     try {
       const headers = getAuthHeaders();
-      await axios.post(`${API_BASE}/notifications/mark-read`, {}, headers);
+      await apiClient.post(`${API_BASE}/notifications/mark-read`, {}, headers);
       set((state) => ({
         notifications: state.notifications.map((n) => ({ ...n, read: 1 }))
       }));
@@ -668,30 +668,30 @@ export const useHRStore = create<HRState>((set, get) => ({
     try {
       const headers = getAuthHeaders();
       const [empRes, branchRes, shiftRes, otRes, reimbRes, jobRes, appRes, auditRes, roomRes, schedRes, resRes, warnRes, trainRes, treeRes, rolesRes, logsRes, todayRes, leaveRes, kpiRes, assetRes, annRes, payRes, setRes, notifRes] = await Promise.allSettled([
-        axios.get(`${API_BASE}/employees`, headers),
-        axios.get(`${API_BASE}/branches`, headers),
-        axios.get(`${API_BASE}/shifts`, headers),
-        axios.get(`${API_BASE}/overtime`, headers),
-        axios.get(`${API_BASE}/reimbursements`, headers),
-        axios.get(`${API_BASE}/recruitment/jobs`, headers),
-        axios.get(`${API_BASE}/recruitment/applicants`, headers),
-        axios.get(`${API_BASE}/audit-logs`, headers),
-        axios.get(`${API_BASE}/meeting-rooms`, headers),
-        axios.get(`${API_BASE}/schedules`, headers),
-        axios.get(`${API_BASE}/offboarding/resignations`, headers),
-        axios.get(`${API_BASE}/offboarding/warnings`, headers),
-        axios.get(`${API_BASE}/trainings`, headers),
-        axios.get(`${API_BASE}/org-chart`, headers),
-        axios.get(`${API_BASE}/roles`, headers),
-        axios.get(`${API_BASE}/attendance/logs`, headers),
-        axios.get(`${API_BASE}/attendance/today`, headers),
-        axios.get(`${API_BASE}/leaves`, headers),
-        axios.get(`${API_BASE}/kpi`, headers),
-        axios.get(`${API_BASE}/assets`, headers),
-        axios.get(`${API_BASE}/announcements`, headers),
-        axios.get(`${API_BASE}/payroll`, headers),
-        axios.get(`${API_BASE}/settings`, headers),
-        axios.get(`${API_BASE}/notifications`, headers)
+        apiClient.get(`${API_BASE}/employees`, headers),
+        apiClient.get(`${API_BASE}/branches`, headers),
+        apiClient.get(`${API_BASE}/shifts`, headers),
+        apiClient.get(`${API_BASE}/overtime`, headers),
+        apiClient.get(`${API_BASE}/reimbursements`, headers),
+        apiClient.get(`${API_BASE}/recruitment/jobs`, headers),
+        apiClient.get(`${API_BASE}/recruitment/applicants`, headers),
+        apiClient.get(`${API_BASE}/audit-logs`, headers),
+        apiClient.get(`${API_BASE}/meeting-rooms`, headers),
+        apiClient.get(`${API_BASE}/schedules`, headers),
+        apiClient.get(`${API_BASE}/offboarding/resignations`, headers),
+        apiClient.get(`${API_BASE}/offboarding/warnings`, headers),
+        apiClient.get(`${API_BASE}/trainings`, headers),
+        apiClient.get(`${API_BASE}/org-chart`, headers),
+        apiClient.get(`${API_BASE}/roles`, headers),
+        apiClient.get(`${API_BASE}/attendance/logs`, headers),
+        apiClient.get(`${API_BASE}/attendance/today`, headers),
+        apiClient.get(`${API_BASE}/leaves`, headers),
+        apiClient.get(`${API_BASE}/kpi`, headers),
+        apiClient.get(`${API_BASE}/assets`, headers),
+        apiClient.get(`${API_BASE}/announcements`, headers),
+        apiClient.get(`${API_BASE}/payroll`, headers),
+        apiClient.get(`${API_BASE}/settings`, headers),
+        apiClient.get(`${API_BASE}/notifications`, headers)
       ]);
 
       set({
@@ -728,7 +728,7 @@ export const useHRStore = create<HRState>((set, get) => ({
   clockIn: async (photoUrl, notes) => {
     const { simulatedLat, simulatedLng } = get();
     const headers = getAuthHeaders();
-    const res = await axios.post(`${API_BASE}/attendance/clock-in`, {
+    const res = await apiClient.post(`${API_BASE}/attendance/clock-in`, {
       latitude: simulatedLat,
       longitude: simulatedLng,
       photo_url: photoUrl,
@@ -740,102 +740,102 @@ export const useHRStore = create<HRState>((set, get) => ({
 
   clockOut: async () => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/attendance/clock-out`, {}, headers);
+    await apiClient.post(`${API_BASE}/attendance/clock-out`, {}, headers);
     await get().fetchData();
   },
 
   requestLeave: async (payload) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/leaves`, payload, headers);
+    await apiClient.post(`${API_BASE}/leaves`, payload, headers);
     await get().fetchData();
   },
 
   approveLeaveL1: async (id) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/leaves/${id}/approve-l1`, {}, headers);
+    await apiClient.post(`${API_BASE}/leaves/${id}/approve-l1`, {}, headers);
     await get().fetchData();
   },
 
   approveLeave: async (id) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/leaves/${id}/approve`, {}, headers);
+    await apiClient.post(`${API_BASE}/leaves/${id}/approve`, {}, headers);
     await get().fetchData();
   },
 
   rejectLeave: async (id) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/leaves/${id}/reject`, {}, headers);
+    await apiClient.post(`${API_BASE}/leaves/${id}/reject`, {}, headers);
     await get().fetchData();
   },
 
   topUpQuota: async (userId, additionalDays) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/leaves/top-up-quota`, { userId, additionalDays }, headers);
+    await apiClient.post(`${API_BASE}/leaves/top-up-quota`, { userId, additionalDays }, headers);
     await get().fetchData();
   },
 
   createRole: async (role) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/roles`, role, headers);
+    await apiClient.post(`${API_BASE}/roles`, role, headers);
     await get().fetchData();
   },
 
   registerEmployee: async (emp) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/auth/register`, emp, headers);
+    await apiClient.post(`${API_BASE}/auth/register`, emp, headers);
     await get().fetchData();
   },
 
   updateEmployee: async (id, data) => {
     const headers = getAuthHeaders();
-    await axios.patch(`${API_BASE}/employees/${id}`, data, headers);
+    await apiClient.patch(`${API_BASE}/employees/${id}`, data, headers);
     await get().fetchData();
   },
 
   setEmployeeStatus: async (id, status) => {
     const headers = getAuthHeaders();
-    await axios.patch(`${API_BASE}/employees/${id}/status`, { status }, headers);
+    await apiClient.patch(`${API_BASE}/employees/${id}/status`, { status }, headers);
     await get().fetchData();
   },
 
   resetPassword: async (userId, newPassword) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/auth/reset-password`, { userId, newPassword }, headers);
+    await apiClient.post(`${API_BASE}/auth/reset-password`, { userId, newPassword }, headers);
   },
 
   createKPI: async (kpi) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/kpi`, kpi, headers);
+    await apiClient.post(`${API_BASE}/kpi`, kpi, headers);
     await get().fetchData();
   },
 
   createAsset: async (asset) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/assets`, asset, headers);
+    await apiClient.post(`${API_BASE}/assets`, asset, headers);
     await get().fetchData();
   },
 
   assignAsset: async (assetId, userId, returnDate) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/assets/${assetId}/assign`, { user_id: userId, return_date: returnDate }, headers);
+    await apiClient.post(`${API_BASE}/assets/${assetId}/assign`, { user_id: userId, return_date: returnDate }, headers);
     await get().fetchData();
   },
 
   createAnnouncement: async (ann) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/announcements`, ann, headers);
+    await apiClient.post(`${API_BASE}/announcements`, ann, headers);
     await get().fetchData();
   },
 
   createPayroll: async (pay) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/payroll`, pay, headers);
+    await apiClient.post(`${API_BASE}/payroll`, pay, headers);
     await get().fetchData();
   },
 
   updateSettings: async (config) => {
     const headers = getAuthHeaders();
-    await axios.post(`${API_BASE}/settings`, config, headers);
+    await apiClient.post(`${API_BASE}/settings`, config, headers);
     await get().fetchData();
   }
 }));
