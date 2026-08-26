@@ -21,6 +21,11 @@ export const AttendanceScreen: React.FC = () => {
         </Text>
       </View>
 
+      <View style={styles.offlineBanner}>
+        <Feather name="wifi-off" size={14} color="#0284c7" />
+        <Text style={styles.offlineText}>{t.offlineSync}: 0 {t.records} (Synced)</Text>
+      </View>
+
       {attendanceLogs.length === 0 ? (
         <Text style={styles.empty}>Belum ada catatan presensi terdaftar.</Text>
       ) : (
@@ -83,5 +88,7 @@ const styles = StyleSheet.create({
   textRose: { color: '#f43f5e' },
   footerRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, paddingTop: 8, borderTopWidth: 1, borderTopColor: 'rgba(148, 163, 184, 0.1)' },
   distText: { fontSize: 10, fontWeight: '700', color: '#2563eb' },
-  notesText: { fontSize: 10, color: '#94a3b8' }
+  notesText: { fontSize: 10, color: '#94a3b8' },
+  offlineBanner: { backgroundColor: '#e0f2fe', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
+  offlineText: { fontSize: 11, fontWeight: '700', color: '#0369a1' }
 });

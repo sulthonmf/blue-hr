@@ -232,6 +232,32 @@ export const ProfileScreen: React.FC<{
           Pengaturan Aplikasi
         </Text>
 
+        <TouchableOpacity
+          style={styles.menuRow}
+          onPress={() => Alert.alert('Slip Gaji PDF', 'Mengunduh Slip Gaji PDF Periode 2026-08... Selesai!')}
+        >
+          <View style={styles.menuLeft}>
+            <Feather name="file-text" size={18} color="#2563eb" />
+            <Text style={[styles.menuText, isDark ? styles.textDark : styles.textLight]}>
+              {t.viewPayslipPdf}
+            </Text>
+          </View>
+          <Feather name="download" size={16} color="#94a3b8" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.menuRow}
+          onPress={() => Alert.alert('2FA Security', 'Autentikasi Dua Langkah (2FA) telah diaktifkan.')}
+        >
+          <View style={styles.menuLeft}>
+            <Feather name="shield" size={18} color="#059669" />
+            <Text style={[styles.menuText, isDark ? styles.textDark : styles.textLight]}>
+              {t.enable2fa}
+            </Text>
+          </View>
+          <Feather name="check-circle" size={16} color="#059669" />
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.menuRow} onPress={toggleTheme}>
           <View style={styles.menuLeft}>
             <Feather

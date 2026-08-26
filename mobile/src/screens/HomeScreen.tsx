@@ -18,6 +18,8 @@ import {
   MeetingScheduleWidget
 } from '../components/modules/DashboardWidgets';
 
+import { HRAssistantModal } from '../components/modules/HRAssistantModal';
+
 interface HomeScreenProps {
   onOpenClockInModal: () => void;
   onOpenLeaveModal: () => void;
@@ -35,11 +37,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const { todayAttendance } = useHRStore();
   const { theme } = useThemeStore();
   const { t } = useLanguageStore();
+  const [isAiModalOpen, setIsAiModalOpen] = React.useState(false);
 
   const isDark = theme === 'dark';
 
   return (
     <ScrollView style={[styles.container, isDark ? styles.bgDark : styles.bgLight]} contentContainerStyle={styles.content}>
+      {/* AI HR Assistant Trigger Banner */}
+      <TouchableOpacity onPress={() => setIsAiModalOpen(true)} style={styles.aiBanner}>
+        <Feather name="message-square" size={16} color="#ffffff" />
+        <Text style={styles.aiBannerText}>{t.aiAssistant} • Tanya Kebijakan & Sisa Cuti</Text>
+      </TouchableOpacity>
+
       {/* 1. GPS Geofence Location Simulator */}
       <LocationSimulator />
 
@@ -93,6 +102,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
       {/* 11. Team Members Ribbon */}
       <TeamMembersRibbon />
+
+      <HRAssistantModal visible={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} />
     </ScrollView>
   );
 };
@@ -110,5 +121,7 @@ const styles = StyleSheet.create({
   bannerTitle: { fontSize: 14, fontWeight: '900', color: '#ffffff', marginTop: 2 },
   bannerTime: { fontSize: 10, color: 'rgba(255, 255, 255, 0.9)', marginTop: 4 },
   clockInBtn: { backgroundColor: '#ffffff', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 14, flexDirection: 'row', alignItems: 'center', gap: 6 },
-  clockInBtnText: { color: '#2563eb', fontWeight: '800', fontSize: 11 }
+  clockInBtnText: { color: '#2563eb', fontWeight: '800', fontSize: 11 },
+  aiBanner: { backgroundColor: '#0f172a', padding: 14, borderRadius: 18, flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12, borderWidth: 1, borderColor: '#334155' },
+  aiBannerText: { color: '#ffffff', fontSize: 12, fontWeight: '800' }
 });
