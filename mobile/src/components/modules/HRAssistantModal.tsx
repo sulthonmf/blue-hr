@@ -79,11 +79,11 @@ export const HRAssistantModal: React.FC<HRAssistantModalProps> = ({ visible, onC
 const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(15, 23, 42, 0.6)', justifyContent: 'flex-end' },
   modalCard: { backgroundColor: '#ffffff', borderTopLeftRadius: 28, borderTopRightRadius: 28, height: '75%', padding: 16 },
-  header: { flexDirection: 'row', justify: 'space-between', alignItems: 'center', pb: 12, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
   headerTitle: { fontSize: 16, fontWeight: '800', color: '#0f172a' },
   closeBtn: { padding: 4 },
   closeText: { fontSize: 18, color: '#64748b', fontWeight: '700' },
-  chatArea: { flex: 1, my: 12 },
+  chatArea: { flex: 1, marginVertical: 12 },
   chatContent: { gap: 10 },
   msgBubble: { maxWidth: '80%', padding: 12, borderRadius: 16 },
   userBubble: { alignSelf: 'flex-end', backgroundColor: '#2563eb' },
@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
   msgText: { fontSize: 13, lineHeight: 18 },
   userText: { color: '#ffffff' },
   botText: { color: '#0f172a' },
-  inputRow: { flexDirection: 'row', gap: 8, pt: 8, borderTopWidth: 1, borderTopColor: '#f1f5f9' },
-  textInput: { flex: 1, backgroundColor: '#f8fafc', borderRadius: 12, px: 12, py: 10, fontSize: 13, color: '#0f172a' },
-  sendBtn: { backgroundColor: '#2563eb', borderRadius: 12, px: 16, py: 10, justifyContent: 'center' },
+  inputRow: { flexDirection: 'row', gap: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#f1f5f9' },
+  textInput: { flex: 1, backgroundColor: '#f8fafc', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, fontSize: 13, color: '#0f172a' },
+  sendBtn: { backgroundColor: '#2563eb', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 10, justifyContent: 'center' },
   sendBtnText: { color: '#ffffff', fontWeight: '800', fontSize: 13 }
 });

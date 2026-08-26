@@ -73,5 +73,17 @@
   "clientName": "Nama Klien / Perusahaan",
   "viewPayslipPdf": "Lihat & Unduh Slip Gaji PDF",
   "enable2fa": "Aktifkan Autentikasi 2 Langkah",
-  "qrScanHint": "Tunjukkan QR Code ini untuk scan akses presensi pintu kantor"
+  "qrScanHint": "Tunjukkan QR Code ini untuk scan akses presensi pintu kantor",
+  "shiftSwap": "Tukar Shift",
+  "helpdeskTitle": "Bantuan HR & Tiket",
+  "announcements": "Pengumuman",
+  "employees": "Daftar Karyawan",
+  "themeMode": "Mode Tema",
+  "dark": "Gelap",
+  "light": "Terang",
+  "approve": "Setujui",
+  "reject": "Tolak",
+  "addEmployee": "Tambah Karyawan",
+  "bookRoom": "Pesan Ruangan",
+  "quickActions": "Aksi Cepat"
 }

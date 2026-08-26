@@ -7,6 +7,8 @@ export interface User {
   department: string;
   division?: string;
   directorate?: string;
+  branch_name?: string;
+  status?: string;
   phone?: string;
   address?: string;
   emergency_contact_name?: string;

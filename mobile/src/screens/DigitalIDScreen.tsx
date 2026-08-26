@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   brandTitle: { fontSize: 16, fontWeight: '900', color: '#38bdf8' },
   cardBadge: { fontSize: 10, fontWeight: '800', backgroundColor: '#0284c7', color: '#ffffff', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
   profileSection: { alignItems: 'center', marginBottom: 24 },
-  avatarCircle: { width: 80, h: 80, borderRadius: 40, backgroundColor: '#2563eb', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
+  avatarCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#2563eb', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
   avatarText: { fontSize: 24, fontWeight: '900', color: '#ffffff' },
   name: { fontSize: 18, fontWeight: '800', color: '#ffffff' },
   position: { fontSize: 13, color: '#94a3b8', marginTop: 2 },
