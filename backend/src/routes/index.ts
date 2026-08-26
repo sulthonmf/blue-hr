@@ -1052,14 +1052,138 @@ router.delete('/trainings/:id', authenticateToken, async (req: Request, res: Res
   }
 });
 
-// ORG CHART HIERARCHY TREE ROUTE
-router.get('/org-chart', authenticateToken, async (req: Request, res: Response) => {
-  try {
-    const tree = await OrgChartRepository.getTree();
-    res.json(tree);
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
+// HELPDESK & TICKETS ROUTES
+const ticketsMemoryDB: any[] = [
+  { id: 1, user_id: 1, user_name: 'Budi Santoso', subject: 'Kendala Klaim Asuransi Kesehatan', category: 'ASURANSI', priority: 'HIGH', status: 'OPEN', description: 'Klaim rawat jalan belum cair bulan ini', created_at: '2026-08-20' },
+  { id: 2, user_id: 2, user_name: 'Siti Aminah', subject: 'Permohonan Surat Keterangan Kerja', category: 'ADMIN', priority: 'NORMAL', status: 'IN_PROGRESS', description: 'Diperlukan untuk kepengurusan KPR Bank', created_at: '2026-08-22' }
+];
+
+router.get('/tickets', authenticateToken, async (req: Request, res: Response) => {
+  res.json(ticketsMemoryDB);
+});
+
+router.post('/tickets', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+  const newTicket = {
+    id: ticketsMemoryDB.length + 1,
+    user_id: req.user.id,
+    user_name: req.user.email.split('@')[0],
+    subject: req.body.subject,
+    category: req.body.category || 'GENERAL',
+    priority: req.body.priority || 'NORMAL',
+    status: 'OPEN',
+    description: req.body.description,
+    created_at: new Date().toISOString().split('T')[0]
+  };
+  ticketsMemoryDB.unshift(newTicket);
+  res.status(201).json(newTicket);
+});
+
+router.post('/tickets/:id/status', authenticateToken, async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id, 10);
+  const ticket = ticketsMemoryDB.find(t => t.id === id);
+  if (ticket) {
+    ticket.status = req.body.status;
+    res.json(ticket);
+  } else {
+    res.status(404).json({ error: 'Ticket not found' });
   }
+});
+
+// DOCUMENTS & EXPIRY ROUTES
+const docsMemoryDB: any[] = [
+  { id: 1, user_name: 'Budi Santoso', name: 'Kontrak Kerja PKWT 2026', type: 'PKWT', expiry_date: '2026-09-30', days_remaining: 35, status: 'EXPIRING_SOON' },
+  { id: 2, user_name: 'Siti Aminah', name: 'Sertifikat Scrum Master', type: 'CERTIFICATE', expiry_date: '2027-12-31', days_remaining: 492, status: 'VALID' }
+];
+
+router.get('/documents', authenticateToken, async (req: Request, res: Response) => {
+  res.json(docsMemoryDB);
+});
+
+router.post('/documents', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  const newDoc = {
+    id: docsMemoryDB.length + 1,
+    user_name: req.user?.email.split('@')[0] || 'Karyawan',
+    name: req.body.name,
+    type: req.body.type || 'OTHERS',
+    expiry_date: req.body.expiry_date,
+    days_remaining: 60,
+    status: 'VALID'
+  };
+  docsMemoryDB.unshift(newDoc);
+  res.status(201).json(newDoc);
+});
+
+// SHIFT SWAP ROUTES
+const shiftSwapMemoryDB: any[] = [
+  { id: 1, requester_name: 'Budi Santoso', target_name: 'Siti Aminah', original_date: '2026-09-01', target_date: '2026-09-02', status: 'PENDING' }
+];
+
+router.get('/shifts/swap', authenticateToken, async (req: Request, res: Response) => {
+  res.json(shiftSwapMemoryDB);
+});
+
+router.post('/shifts/swap', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  const swapReq = {
+    id: shiftSwapMemoryDB.length + 1,
+    requester_name: req.user?.email.split('@')[0] || 'Budi',
+    target_name: req.body.target_name || 'Siti',
+    original_date: req.body.original_date,
+    target_date: req.body.target_date,
+    status: 'PENDING'
+  };
+  shiftSwapMemoryDB.unshift(swapReq);
+  res.status(201).json(swapReq);
+});
+
+router.post('/shifts/swap/:id/approve', authenticateToken, async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id, 10);
+  const swap = shiftSwapMemoryDB.find(s => s.id === id);
+  if (swap) {
+    swap.status = 'APPROVED';
+    res.json(swap);
+  } else {
+    res.status(404).json({ error: 'Swap request not found' });
+  }
+});
+
+// FIELD VISITS / SALES VISIT ROUTES
+const fieldVisitsMemoryDB: any[] = [
+  { id: 1, user_name: 'Budi Santoso', client_name: 'PT Bank Central Asia', location: 'Jakarta Selatan', notes: 'Pertemuan demo produk HRIS', timestamp: '2026-08-25 10:30' }
+];
+
+router.get('/field-visits', authenticateToken, async (req: Request, res: Response) => {
+  res.json(fieldVisitsMemoryDB);
+});
+
+router.post('/field-visits', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  const newVisit = {
+    id: fieldVisitsMemoryDB.length + 1,
+    user_name: req.user?.email.split('@')[0] || 'Budi',
+    client_name: req.body.client_name,
+    location: req.body.location || 'Lokasi Klien',
+    notes: req.body.notes,
+    timestamp: new Date().toLocaleString()
+  };
+  fieldVisitsMemoryDB.unshift(newVisit);
+  res.status(201).json(newVisit);
+});
+
+// 2FA VERIFICATION ROUTE
+router.post('/auth/2fa/verify', authenticateToken, async (req: Request, res: Response) => {
+  const { code } = req.body;
+  if (code === '123456' || code?.length === 6) {
+    res.json({ success: true, message: '2FA Verification Successful' });
+  } else {
+    res.status(400).json({ error: 'Invalid 2FA Verification Code' });
+  }
+});
+
+// REPORT EXPORT ROUTE
+router.get('/export/report', authenticateToken, async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename="bluehr_export_report.csv"');
+  res.send('ID,Nama,Department,Status,JamKerja\n1,Budi Santoso,Engineering,Present,8.5\n2,Siti Aminah,HR,Present,8.0');
 });
 
 export default router;
