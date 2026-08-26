@@ -57,5 +57,21 @@
   "languageSetting": "Language / Bahasa",
   "loginSub": "Enterprise HR Mobile Portal",
   "enterPasswordPlaceholder": "Enter password...",
-  "enterEmailPlaceholder": "user@company.com"
+  "enterEmailPlaceholder": "user@company.com",
+  "digitalId": "Digital ID Card",
+  "fieldVisit": "Field Visit",
+  "helpdeskTickets": "HR Helpdesk & Support",
+  "aiAssistant": "AI HR Assistant",
+  "offlineSync": "Offline Mode Queue",
+  "syncNow": "Sync Now",
+  "amountLabel": "Amount (IDR)",
+  "descriptionLabel": "Description / Notes",
+  "uploadReceipt": "Upload Receipt Image",
+  "overtimeHours": "Overtime Hours",
+  "shiftDate": "Shift Date",
+  "colleagueName": "Select Colleague",
+  "clientName": "Client / Company Name",
+  "viewPayslipPdf": "View & Download Payslip PDF",
+  "enable2fa": "Enable 2-Factor Authentication",
+  "qrScanHint": "Show this QR Code to scan for office door attendance access"
 }

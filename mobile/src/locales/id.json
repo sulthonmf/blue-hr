@@ -57,5 +57,21 @@
   "languageSetting": "Bahasa / Language",
   "loginSub": "Enterprise HR Mobile Portal",
   "enterPasswordPlaceholder": "Masukkan password...",
-  "enterEmailPlaceholder": "user@company.com"
+  "enterEmailPlaceholder": "user@company.com",
+  "digitalId": "Digital ID Card",
+  "fieldVisit": "Kunjungan Lapangan",
+  "helpdeskTickets": "Bantuan HR & Tiket",
+  "aiAssistant": "Asisten HR AI",
+  "offlineSync": "Antrean Mode Offline",
+  "syncNow": "Sinkronkan Sekarang",
+  "amountLabel": "Jumlah Nominal (Rp)",
+  "descriptionLabel": "Deskripsi / Catatan",
+  "uploadReceipt": "Unggah Bukti Struk",
+  "overtimeHours": "Durasi Lembur (Jam)",
+  "shiftDate": "Tanggal Shift",
+  "colleagueName": "Pilih Rekan Kerja",
+  "clientName": "Nama Klien / Perusahaan",
+  "viewPayslipPdf": "Lihat & Unduh Slip Gaji PDF",
+  "enable2fa": "Aktifkan Autentikasi 2 Langkah",
+  "qrScanHint": "Tunjukkan QR Code ini untuk scan akses presensi pintu kantor"
 }
