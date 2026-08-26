@@ -11,6 +11,8 @@ export const apiClient = axios.create({
   },
 });
 
+export const client = apiClient;
+
 // Request Interceptor: Attach bearer token automatically if present
 apiClient.interceptors.request.use(
   (config) => {

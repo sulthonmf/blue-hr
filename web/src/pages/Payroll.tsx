@@ -202,6 +202,16 @@ export const PayrollPage: React.FC = () => {
 
         {canManagePayroll && (
           <div className="flex items-center gap-2 flex-wrap">
+            <a
+              href="/api/v1/export/report"
+              target="_blank"
+              rel="noreferrer"
+              className="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs px-4 py-2.5 rounded-full shadow-md flex items-center gap-2 transition-all cursor-pointer"
+            >
+              <FileText size={15} />
+              <span>{t.exportExcel}</span>
+            </a>
+
             <button
               onClick={handleGenerateAllPayrolls}
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-full shadow-md flex items-center gap-2 transition-all cursor-pointer"

@@ -20,7 +20,11 @@ import {
   GraduationCap,
   Wallet,
   Receipt,
-  FileCheck2
+  FileCheck2,
+  LifeBuoy,
+  FileText,
+  ArrowLeftRight,
+  MapPin
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useLanguageStore } from '../../stores/useLanguageStore';
@@ -49,6 +53,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
       items: [
         { id: 'employees', label: t.employees, icon: Users, perm: null },
         { id: 'orgChart', label: 'Struktur Organisasi', icon: Network, perm: null },
+        { id: 'documents', label: t.documentsTitle, icon: FileText, perm: null },
+        { id: 'helpdesk', label: t.helpdeskTitle, icon: LifeBuoy, perm: null },
         { id: 'branches', label: 'Cabang Perusahaan', icon: Building2, perm: null },
         { id: 'recruitment', label: 'Perekrutan (ATS)', icon: UserPlus, perm: 'manage_users' },
         { id: 'offboarding', label: 'Offboarding & SP', icon: UserX, perm: null },
@@ -68,7 +74,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
       category: 'WAKTU & ABSENSI',
       items: [
         { id: 'attendance', label: t.attendance, icon: Clock, perm: null },
+        { id: 'fieldVisits', label: t.fieldVisitsTitle, icon: MapPin, perm: null },
         { id: 'shifts', label: 'Shift Kerja', icon: FileCheck2, perm: null },
+        { id: 'shiftSwap', label: t.shiftSwapTitle, icon: ArrowLeftRight, perm: null },
         { id: 'leave', label: t.leave, icon: CalendarDays, perm: null },
       ]
     },
@@ -147,7 +155,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
                       title={isCollapsed ? item.label : undefined}
-                      className={`w-full flex items-center gap-3 py-2.5 rounded-2xl font-bold text-xs transition-all ${
+                      className={`w-full flex items-center text-left gap-3 py-2.5 rounded-2xl font-bold text-xs transition-all ${
                         isCollapsed ? 'justify-center px-0' : 'px-3.5'
                       } ${
                         isActive
@@ -155,8 +163,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                           : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800/60'
                       }`}
                     >
-                      <Icon size={18} className={isActive ? 'text-white' : 'text-slate-400'} />
-                      {!isCollapsed && <span>{item.label}</span>}
+                      <Icon size={18} className={`shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                      {!isCollapsed && <span className="text-left leading-tight flex-1">{item.label}</span>}
                     </button>
                   );
                 })}

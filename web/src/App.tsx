@@ -27,6 +27,10 @@ import { AnnouncementsPage } from "./pages/Announcements";
 import { RolesPage } from "./pages/Roles";
 import { AuditLogsPage } from "./pages/AuditLogs";
 import { SettingsPage } from "./pages/Settings";
+import { HelpdeskPage } from "./pages/Helpdesk";
+import { DocumentsPage } from "./pages/Documents";
+import { ShiftSwapPage } from "./pages/ShiftSwap";
+import { FieldVisitsPage } from "./pages/FieldVisits";
 
 export const App: React.FC = () => {
   const { token } = useAuthStore();
@@ -97,6 +101,14 @@ export const App: React.FC = () => {
         return <AuditLogsPage />;
       case "settings":
         return <SettingsPage />;
+      case "helpdesk":
+        return <HelpdeskPage />;
+      case "documents":
+        return <DocumentsPage />;
+      case "shiftSwap":
+        return <ShiftSwapPage />;
+      case "fieldVisits":
+        return <FieldVisitsPage />;
       default:
         return <DashboardPage onNavigate={setActiveTab} />;
     }
