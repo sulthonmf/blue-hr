@@ -469,7 +469,7 @@ export function initDatabase(): Promise<void> {
       // Seed 100 Employee test data if count < 100
       db.get(`SELECT COUNT(*) as count FROM users`, [], (err, row: any) => {
         if (!err && row && row.count < 100) {
-          const defaultPasswordHash = '$2a$10$X8C7mJ2R1wM2.H4xH0u12.W7oY1L8Dq5vN4bM3aC2vB1n0mP9oL8k'; // password123
+          const defaultPasswordHash = bcrypt.hashSync('password123', 10);
 
           const firstNames = ['Budi', 'Siti', 'Rizky', 'Dewi', 'Aditya', 'Ayu', 'Rahmat', 'Indah', 'Fajar', 'Bagas', 'Niken', 'Hendri', 'Putri', 'Taufik', 'Laras', 'Agus', 'Mega', 'Eko', 'Rina', 'Dian'];
           const lastNames = ['Pratama', 'Wijaya', 'Rahmawati', 'Anggraini', 'Firmansyah', 'Santoso', 'Kusuma', 'Saputra', 'Utami', 'Wibowo', 'Hidayat', 'Nugroho', 'Suryani', 'Lestari', 'Setiawan'];
