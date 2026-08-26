@@ -57,7 +57,7 @@ export const EmployeesScreen: React.FC = () => {
       </View>
 
       {/* Department Filter Pills */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.deptScroll} contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.deptScroll} contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 4, gap: 8, alignItems: 'center' }}>
         {departments.map((dept) => (
           <TouchableOpacity
             key={dept}
@@ -123,10 +123,10 @@ const styles = StyleSheet.create({
   searchBar: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 16, borderWidth: 1 },
   searchInput: { flex: 1, fontSize: 12 },
 
-  deptScroll: { maxHeight: 36, marginBottom: 12 },
-  deptPill: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 14, borderWidth: 1 },
+  deptScroll: { marginBottom: 10, flexGrow: 0 },
+  deptPill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14, borderWidth: 1, justifyContent: 'center', alignItems: 'center', minHeight: 34 },
   deptPillActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
-  deptPillText: { fontSize: 11, fontWeight: '800' },
+  deptPillText: { fontSize: 11, fontWeight: '800', lineHeight: 15 },
 
   listContent: { paddingHorizontal: 16, paddingBottom: 24, gap: 10 },
   empCard: { padding: 14, borderRadius: 20, borderWidth: 1 },

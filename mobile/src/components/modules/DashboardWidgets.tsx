@@ -1033,6 +1033,14 @@ export const QuickHRActionsWidget: React.FC<{
 
   const allActions = [
     {
+      key: "digitalId",
+      title: t.digitalId || "Digital ID",
+      icon: "user-check",
+      color: "#0284c7",
+      bg: "rgba(2, 132, 199, 0.12)",
+      isHR: false,
+    },
+    {
       key: "employees",
       title: t.addEmployee || "Karyawan",
       icon: "users",
@@ -1046,6 +1054,14 @@ export const QuickHRActionsWidget: React.FC<{
       icon: "clock",
       color: "#059669",
       bg: "rgba(5, 150, 105, 0.12)",
+      isHR: false,
+    },
+    {
+      key: "shiftSwap",
+      title: t.shiftSwap || "Tukar Shift",
+      icon: "repeat",
+      color: "#6366f1",
+      bg: "rgba(99, 102, 241, 0.12)",
       isHR: false,
     },
     {
@@ -1070,6 +1086,14 @@ export const QuickHRActionsWidget: React.FC<{
       icon: "credit-card",
       color: "#0891b2",
       bg: "rgba(8, 145, 178, 0.12)",
+      isHR: false,
+    },
+    {
+      key: "helpdesk",
+      title: t.helpdeskTickets || "Helpdesk",
+      icon: "help-circle",
+      color: "#ec4899",
+      bg: "rgba(236, 72, 153, 0.12)",
       isHR: false,
     },
     {
@@ -1109,7 +1133,7 @@ export const QuickHRActionsWidget: React.FC<{
           {t.quickActions || "Aksi Cepat & Navigasi HR"}
         </Text>
         <Text style={{ fontSize: 10, fontWeight: "800", color: "#2563eb" }}>
-          6 Modul
+          {actions.length} Modul
         </Text>
       </View>
 

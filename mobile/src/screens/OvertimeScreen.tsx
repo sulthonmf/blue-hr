@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { useLanguageStore } from '../stores/useLanguageStore';
-import { client } from '../api/client';
+import { useThemeStore } from '../stores/useThemeStore';
+import { apiClient } from '../api/client';
 
-export const OvertimeScreen: React.FC<{ navigation?: any }> = () => {
+export const OvertimeScreen: React.FC = () => {
   const { t } = useLanguageStore();
+  const { theme } = useThemeStore();
+  const isDark = theme === 'dark';
+
   const [overtimes, setOvertimes] = useState<any[]>([]);
   const [date, setDate] = useState('2026-08-26');
   const [hours, setHours] = useState('3');
@@ -13,8 +17,8 @@ export const OvertimeScreen: React.FC<{ navigation?: any }> = () => {
 
   const fetchOvertimes = async () => {
     try {
-      const res = await client.get('/api/v1/overtime/my');
-      setOvertimes(res.data);
+      const res = await apiClient.get('/overtime/my');
+      setOvertimes(res.data || []);
     } catch {
       setOvertimes([
         { id: 1, date: '2026-08-20', hours: 3, reason: 'Rilis fitur baru v2.0', status: 'APPROVED' },
@@ -34,7 +38,7 @@ export const OvertimeScreen: React.FC<{ navigation?: any }> = () => {
     }
     setIsSubmitting(true);
     try {
-      await client.post('/api/v1/overtime', {
+      await apiClient.post('/overtime', {
         date,
         hours: parseFloat(hours),
         reason
@@ -50,20 +54,20 @@ export const OvertimeScreen: React.FC<{ navigation?: any }> = () => {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>{t.overtime}</Text>
+    <ScrollView style={[styles.container, isDark ? styles.bgDark : styles.bgLight]} contentContainerStyle={styles.content}>
+      <View style={[styles.card, isDark ? styles.cardDark : styles.cardLight]}>
+        <Text style={[styles.cardTitle, isDark ? styles.textDark : styles.textLight]}>{t.overtime || 'Upah Lembur'}</Text>
         
         <Text style={styles.label}>Tanggal Lembur</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, isDark ? styles.inputDark : styles.inputLight]}
           value={date}
           onChangeText={setDate}
         />
 
-        <Text style={styles.label}>{t.overtimeHours}</Text>
+        <Text style={styles.label}>{t.overtimeHours || 'Durasi Lembur (Jam)'}</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, isDark ? styles.inputDark : styles.inputLight]}
           keyboardType="numeric"
           value={hours}
           onChangeText={setHours}
@@ -71,7 +75,7 @@ export const OvertimeScreen: React.FC<{ navigation?: any }> = () => {
 
         <Text style={styles.label}>Alasan & Deskripsi Pekerjaan</Text>
         <TextInput
-          style={[styles.input, { height: 70 }]}
+          style={[styles.input, isDark ? styles.inputDark : styles.inputLight, { height: 70 }]}
           multiline
           value={reason}
           onChangeText={setReason}
@@ -80,15 +84,15 @@ export const OvertimeScreen: React.FC<{ navigation?: any }> = () => {
         />
 
         <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} disabled={isSubmitting}>
-          <Text style={styles.submitBtnText}>{isSubmitting ? t.submitting : t.submit}</Text>
+          <Text style={styles.submitBtnText}>{isSubmitting ? (t.submitting || 'Mengirim...') : (t.submit || 'Kirim Pengajuan')}</Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.sectionHeader}>Riwayat Pengajuan Lembur</Text>
+      <Text style={[styles.sectionHeader, isDark ? styles.textDark : styles.textLight]}>Riwayat Pengajuan Lembur</Text>
       {overtimes.map((item) => (
-        <View key={item.id} style={styles.historyCard}>
+        <View key={item.id} style={[styles.historyCard, isDark ? styles.cardDark : styles.cardLight]}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.historyTitle}>{item.date} • {item.hours} Jam</Text>
+            <Text style={[styles.historyTitle, isDark ? styles.textDark : styles.textLight]}>{item.date} • {item.hours} Jam</Text>
             <Text style={styles.historySubtitle}>{item.reason}</Text>
           </View>
           <Text style={[styles.statusBadge, item.status === 'APPROVED' ? styles.statusApproved : styles.statusPending]}>
@@ -101,18 +105,26 @@ export const OvertimeScreen: React.FC<{ navigation?: any }> = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8fafc' },
+  container: { flex: 1 },
+  bgDark: { backgroundColor: '#0f172a' },
+  bgLight: { backgroundColor: '#f8fafc' },
+  textDark: { color: '#ffffff' },
+  textLight: { color: '#0f172a' },
   content: { padding: 16, gap: 16 },
-  card: { backgroundColor: '#ffffff', borderRadius: 20, padding: 16, borderWidth: 1, borderColor: '#e2e8f0' },
-  cardTitle: { fontSize: 16, fontWeight: '800', color: '#0f172a', marginBottom: 12 },
-  label: { fontSize: 12, fontWeight: '700', color: '#64748b', marginTop: 8, marginBottom: 4 },
-  input: { backgroundColor: '#f1f5f9', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, fontSize: 13, color: '#0f172a' },
+  card: { borderRadius: 20, padding: 16, borderWidth: 1 },
+  cardDark: { backgroundColor: '#1e293b', borderColor: '#334155' },
+  cardLight: { backgroundColor: '#ffffff', borderColor: '#e2e8f0' },
+  cardTitle: { fontSize: 16, fontWeight: '800', marginBottom: 12 },
+  label: { fontSize: 12, fontWeight: '700', color: '#94a3b8', marginTop: 8, marginBottom: 4 },
+  input: { borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, fontSize: 13 },
+  inputDark: { backgroundColor: '#020617', color: '#ffffff' },
+  inputLight: { backgroundColor: '#f1f5f9', color: '#0f172a' },
   submitBtn: { backgroundColor: '#2563eb', borderRadius: 12, padding: 14, alignItems: 'center', marginTop: 16 },
   submitBtnText: { color: '#ffffff', fontWeight: '800', fontSize: 14 },
-  sectionHeader: { fontSize: 14, fontWeight: '800', color: '#334155', marginTop: 8 },
-  historyCard: { backgroundColor: '#ffffff', borderRadius: 16, padding: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderWidth: 1, borderColor: '#e2e8f0' },
-  historyTitle: { fontSize: 13, fontWeight: '700', color: '#0f172a' },
-  historySubtitle: { fontSize: 11, color: '#64748b', marginTop: 2 },
+  sectionHeader: { fontSize: 14, fontWeight: '800', marginTop: 8 },
+  historyCard: { borderRadius: 16, padding: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderWidth: 1 },
+  historyTitle: { fontSize: 13, fontWeight: '700' },
+  historySubtitle: { fontSize: 11, color: '#94a3b8', marginTop: 2 },
   statusBadge: { fontSize: 10, fontWeight: '800', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, overflow: 'hidden' },
   statusApproved: { backgroundColor: '#dcfce7', color: '#166534' },
   statusPending: { backgroundColor: '#fef3c7', color: '#92400e' }

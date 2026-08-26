@@ -20,6 +20,14 @@ import { AttendanceScreen } from './src/screens/AttendanceScreen';
 import { LeaveScreen } from './src/screens/LeaveScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { EmployeesScreen } from './src/screens/EmployeesScreen';
+import { ReimbursementScreen } from './src/screens/ReimbursementScreen';
+import { OvertimeScreen } from './src/screens/OvertimeScreen';
+import { DigitalIDScreen } from './src/screens/DigitalIDScreen';
+import { FieldVisitScreen } from './src/screens/FieldVisitScreen';
+import { HelpdeskScreen } from './src/screens/HelpdeskScreen';
+import { ShiftSwapScreen } from './src/screens/ShiftSwapScreen';
+import { SchedulesScreen } from './src/screens/SchedulesScreen';
+import { AnnouncementsScreen } from './src/screens/AnnouncementsScreen';
 
 export default function App() {
   const { token, isInitializing, initAuth } = useAuthStore();
@@ -79,7 +87,23 @@ export default function App() {
       case 'approval':
         return <LeaveScreen onOpenLeaveModal={() => setIsLeaveOpen(true)} />;
       case 'profile':
-        return <ProfileScreen onOpenAvatarUploadModal={() => setIsAvatarOpen(true)} />;
+        return <ProfileScreen onOpenAvatarUploadModal={() => setIsAvatarOpen(true)} onNavigate={(tab) => setActiveTab(tab)} />;
+      case 'reimbursements':
+        return <ReimbursementScreen />;
+      case 'overtime':
+        return <OvertimeScreen />;
+      case 'digitalId':
+        return <DigitalIDScreen />;
+      case 'fieldVisit':
+        return <FieldVisitScreen />;
+      case 'helpdesk':
+        return <HelpdeskScreen />;
+      case 'shiftSwap':
+        return <ShiftSwapScreen />;
+      case 'schedules':
+        return <SchedulesScreen />;
+      case 'announcements':
+        return <AnnouncementsScreen />;
       case 'home':
       default:
         return (
