@@ -1,9 +1,12 @@
 import sqlite3 from 'sqlite3';
 import path from 'path';
+import bcrypt from 'bcryptjs';
 
 const sqlite = sqlite3.verbose();
 const dbPath = path.resolve(__dirname, '../../blue_hr.db');
 export const db = new sqlite.Database(dbPath);
+db.configure('busyTimeout', 10000);
+db.run('PRAGMA journal_mode = WAL;');
 
 export function initDatabase(): Promise<void> {
   return new Promise((resolve, reject) => {

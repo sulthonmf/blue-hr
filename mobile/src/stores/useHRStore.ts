@@ -10,6 +10,7 @@ interface HRState {
   teamMembers: User[];
   employees: User[];
   branches: any[];
+  payrolls: any[];
   notifications: NotificationItem[];
   settings: Settings;
   isLoading: boolean;
@@ -59,6 +60,7 @@ export const useHRStore = create<HRState>((set, get) => ({
   teamMembers: [],
   employees: [],
   branches: [],
+  payrolls: [],
   overtimes: [],
   reimbursements: [],
   schedules: [],
@@ -154,7 +156,7 @@ export const useHRStore = create<HRState>((set, get) => ({
   fetchData: async () => {
     set({ isLoading: true, loadingMessage: 'Memuat Data HR...' });
     try {
-      const [logsRes, todayRes, leaveRes, annRes, teamRes, branchRes, otRes, reimbRes, schedRes, roomRes, resRes, warnRes, trainRes, treeRes, notifRes, setRes] = await Promise.allSettled([
+      const [logsRes, todayRes, leaveRes, annRes, teamRes, branchRes, otRes, reimbRes, schedRes, roomRes, resRes, warnRes, trainRes, treeRes, notifRes, setRes, payRes] = await Promise.allSettled([
         apiClient.get('/attendance/logs'),
         apiClient.get('/attendance/today'),
         apiClient.get('/leaves'),
@@ -170,7 +172,8 @@ export const useHRStore = create<HRState>((set, get) => ({
         apiClient.get('/trainings'),
         apiClient.get('/org-chart'),
         apiClient.get('/notifications'),
-        apiClient.get('/settings')
+        apiClient.get('/settings'),
+        apiClient.get('/payroll')
       ]);
 
       set({
@@ -181,6 +184,7 @@ export const useHRStore = create<HRState>((set, get) => ({
         teamMembers: teamRes.status === 'fulfilled' ? teamRes.value.data : [],
         employees: teamRes.status === 'fulfilled' ? teamRes.value.data : [],
         branches: branchRes.status === 'fulfilled' ? branchRes.value.data : [],
+        payrolls: payRes.status === 'fulfilled' ? payRes.value.data : [],
         overtimes: otRes.status === 'fulfilled' ? otRes.value.data : [],
         reimbursements: reimbRes.status === 'fulfilled' ? reimbRes.value.data : [],
         schedules: schedRes.status === 'fulfilled' ? schedRes.value.data : [],

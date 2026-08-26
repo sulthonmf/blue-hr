@@ -18,6 +18,8 @@ web-build/
 
 # SQLite database files (local dev DB created on runtime)
 *.db-journal
+*.db-shm
+*.db-wal
 
 # Temporary logs & test artifacts
 *.log

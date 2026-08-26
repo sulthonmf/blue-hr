@@ -16,11 +16,13 @@ import { useHRStore } from "../stores/useHRStore";
 import { useThemeStore } from "../stores/useThemeStore";
 import { useLanguageStore } from "../stores/useLanguageStore";
 import { PasswordStrengthChecklist } from "../components/modules/PasswordStrengthChecklist";
+import { PayslipModal } from "../components/modules/PayslipModal";
 import { apiClient } from "../api/client";
 
 export const ProfileScreen: React.FC<{
   onOpenAvatarUploadModal: () => void;
-}> = ({ onOpenAvatarUploadModal }) => {
+  onNavigate?: (tab: string) => void;
+}> = ({ onOpenAvatarUploadModal, onNavigate }) => {
   const { user, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
   const { lang, toggleLanguage, t } = useLanguageStore();
@@ -28,6 +30,7 @@ export const ProfileScreen: React.FC<{
   const { requestResignation } = useHRStore();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isResignModalOpen, setIsResignModalOpen] = useState(false);
+  const [isPayslipModalOpen, setIsPayslipModalOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [resignReason, setResignReason] = useState('');
   const [loading, setLoading] = useState(false);
@@ -232,9 +235,24 @@ export const ProfileScreen: React.FC<{
           Pengaturan Aplikasi
         </Text>
 
+        {onNavigate && (
+          <TouchableOpacity
+            style={styles.menuRow}
+            onPress={() => onNavigate('digitalId')}
+          >
+            <View style={styles.menuLeft}>
+              <Feather name="credit-card" size={18} color="#0284c7" />
+              <Text style={[styles.menuText, isDark ? styles.textDark : styles.textLight]}>
+                {t.digitalId || 'Digital ID Card'}
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={18} color="#94a3b8" />
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity
           style={styles.menuRow}
-          onPress={() => Alert.alert('Slip Gaji PDF', 'Mengunduh Slip Gaji PDF Periode 2026-08... Selesai!')}
+          onPress={() => setIsPayslipModalOpen(true)}
         >
           <View style={styles.menuLeft}>
             <Feather name="file-text" size={18} color="#2563eb" />
@@ -387,7 +405,7 @@ export const ProfileScreen: React.FC<{
       <Modal visible={isResignModalOpen} animationType="slide" transparent>
         <View style={{ flex: 1, backgroundColor: 'rgba(15, 23, 42, 0.75)', justifyContent: 'center', padding: 20 }}>
           <View style={[{ padding: 20, borderRadius: 24, borderWidth: 1 }, isDark ? styles.cardDark : styles.cardLight]}>
-            <View style={{ flexDirection: 'row', justify: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
               <Text style={[{ fontSize: 14, fontWeight: '900', color: '#f43f5e' }]}>
                 Pengajuan Resign Karyawan
               </Text>
@@ -440,6 +458,9 @@ export const ProfileScreen: React.FC<{
           </View>
         </View>
       </Modal>
+
+      {/* Payslip PDF View / Download Modal */}
+      <PayslipModal isOpen={isPayslipModalOpen} onClose={() => setIsPayslipModalOpen(false)} />
     </ScrollView>
   );
 };
