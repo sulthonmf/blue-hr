@@ -9,35 +9,49 @@
 ## 🌟 Fitur Utama (Key Features)
 
 ### 1. 🎯 Presensi Geofencing GPS Real Device & Simulasi
-
-- **Deteksi GPS Real**: Menggunakan HTML5 Geolocation & Haversine Distance Formula untuk menghitung jarak presesi real-time karyawan terhadap koordinat kantor pusat (-6.2088, 106.8456).
-- **Mode Testing Simulator**: Tombol simulasi jarak aman (`1.2 km`) dan luar radius (`6.5 km`) untuk pengujian.
+- **Deteksi GPS Real**: Menggunakan HTML5 Geolocation & Haversine Distance Formula untuk menghitung jarak presensi real-time karyawan terhadap koordinat lokasi kantor.
+- **Mode Testing Simulator**: Tombol simulasi jarak aman (`1.2 km`) dan luar radius (`6.5 km`) untuk pengujian tanpa perlu berpindah lokasi.
 
 ### 2. 🔐 Keamanan & Biometrik Presensi
-
-- **Verifikasi Biometrik (FaceID / Sidik Jari)**: Otentikasi lokal sebelum melakukan presensi untuk mencegah kecurangan.
-- **Deteksi Rooted / Jailbroken Device**: Memeriksa integritas perangkat Android/iOS dan mendeteksi alat _mock location_ untuk mencegah GPS spoofing.
+- **Verifikasi Biometrik (FaceID / Sidik Jari)**: Otentikasi lokal perangkat sebelum melakukan presensi masuk/pulang.
+- **Deteksi Rooted / Jailbroken Device & Mock Location**: Memeriksa integritas perangkat Android/iOS serta mendeteksi alat _mock location_ untuk mencegah GPS spoofing.
+- **Keamanan Berbasis Peran (RBAC)**: Kontrol akses ketat berbasis izin per fungsi (Role & Fine-Grained Permissions) dan otentikasi JWT / HttpOnly Cookie.
 
 ### 3. 📝 Sistem Pengajuan Cuti Multi-Level Approval
-
 - **Alur Persetujuan Bertingkat**:
-  - **Status PENDING**: Mengisi permohonan cuti.
-  - **Level 1 Approval (`APPROVED_L1`)**: Persetujuan oleh Manager Departemen.
-  - **Level 2 Final Approval (`APPROVED`)**: Persetujuan final oleh HR Lead / Direksi.
-- **Kalkulasi Kuota Otomatis**: Memotong kuota cuti tahunan karyawan (`leave_quota`) secara dinamis.
+  - **Status PENDING**: Pengajuan permohonan cuti oleh karyawan.
+  - **Level 1 Approval (`APPROVED_L1`)**: Review dan persetujuan oleh Manager Departemen.
+  - **Level 2 Final Approval (`APPROVED`)**: Persetujuan akhir oleh HR Lead / Direksi.
+- **Kalkulasi Kuota Otomatis**: Pemotongan kuota cuti tahunan (`leave_quota`) secara otomatis dan dinamis.
 
-### 4. 🏢 Hirarki Struktur Organisasi 4-Tingkat
+### 4. 💰 Payroll & Penggajian Terintegrasi
+- **Kalkulasi Slip Gaji Automated**: Perhitungan otomatis Gaji Pokok, Tunjangan, Potongan, BPJS Ketenagakerjaan, BPJS Kesehatan, dan PPh 21.
+- **Status Pembayaran & Export**: Manajemen siklus penggajian bulanan dengan perincian lengkap dan riwayat slip gaji karyawan.
 
-- **Struktur Korporasi**: Direksi / Board of Directors ➔ Divisi ➔ Departemen ➔ Karyawan (NIP: `EMP-XXXX`).
-- **Tim Se-Departemen**: Widget `TeamMembersRibbon` menampilkan rekan se-departemen melalui endpoint `/api/v1/team`.
+### 5. 🧾 Pengajuan Reimbursement & Klaim Biaya
+- **Klaim Biaya Operasional**: Pengajuan reimbursement medis, perjalanan dinas, dan biaya operasional lengkap dengan lampiran bukti nota.
+- **Persetujuan Multi-Status**: Verification flow oleh Finance & HR dari status pengajuan hingga dicairkan.
 
-### 5. 📢 Pengumuman Perusahaan & Notifikasi Real-Time
+### 6. ⏰ Pengelolaan Lembur (Overtime) & Shift Kerja
+- **Pengajuan Lembur (Overtime)**: Modul lembur dengan estimasi kompensasi dan approval dari pengawas.
+- **Manajemen Shift & Penukaran Shift (Shift Swap)**: Pengaturan pola kerja shift karyawan serta fasilitas penukaran jadwal shift antar rekan kerja.
 
-- Modul pembuatan pengumuman dari Web HR yang secara otomatis menyiarkan notifikasi ke aplikasi Mobile.
+### 7. 🏢 Hirarki Struktur Organisasi & Kartu Pegawai Digital
+- **Struktur Korporasi 4-Tingkat**: Direksi / Board of Directors ➔ Divisi ➔ Departemen ➔ Karyawan (NIP: `EMP-XXXX`).
+- **Interactive Org Chart & Team Ribbon**: Visualisasi bagan organisasi serta widget anggota tim se-departemen.
+- **Kartu Pegawai Digital (Digital ID Card)**: QR Code ID Pegawai digital untuk identifikasi cepat.
 
-### 6. 📊 Laporan Unit Test HTML Interaktif
+### 8. 📊 Penilaian Kinerja (KPI) & Manajemen Aset/Dokumen
+- **Evaluasi KPI (Key Performance Indicator)**: Monitoring target kinerja dan skor evaluasi berkala karyawan.
+- **Inventaris Aset & Repositori Dokumen**: Pelacakan aset kantor yang dipinjamkan serta repositori dokumen resmi/sertifikat karyawan.
 
-- Eksekusi `npm run test:report` menghasilkan laporan test HTML interaktif yang dapat dibuka langsung di browser:
+### 9. 📢 Pengumuman, Helpdesk, Kunjungan Lapangan & Pelatihan
+- **Diseminasi Pengumuman Real-Time**: Siaran informasi penting ke Web Dashboard dan Aplikasi Mobile.
+- **Helpdesk & Field Visit**: Tiket pertanyaan/keluhan HR serta pelacakan kunjungan kerja luar kantor.
+- **Pelatihan Karyawan (Trainings)**: Pendaftaran dan modul pengkaderan/pelatihan internal perusahaan.
+
+### 10. 📊 Laporan Unit Test HTML Interaktif
+- **Pengujian Otomatis Seluruh Layer**:
   - 🌐 [Backend Test HTML Report](backend/test-report.html)
   - 🌐 [Web Test HTML Report](web/test-report.html)
   - 🌐 [Mobile Test HTML Report](mobile/test-report.html)
