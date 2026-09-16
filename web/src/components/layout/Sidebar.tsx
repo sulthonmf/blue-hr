@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   LayoutDashboard,
   Clock,
@@ -24,18 +24,21 @@ import {
   LifeBuoy,
   FileText,
   ArrowLeftRight,
-  MapPin
-} from 'lucide-react';
-import { useAuthStore } from '../../stores/useAuthStore';
-import { useLanguageStore } from '../../stores/useLanguageStore';
-import { useSidebarStore } from '../../stores/useSidebarStore';
+  MapPin,
+} from "lucide-react";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { useLanguageStore } from "../../stores/useLanguageStore";
+import { useSidebarStore } from "../../stores/useSidebarStore";
 
 interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  activeTab,
+  setActiveTab,
+}) => {
   const { user } = useAuthStore();
   const { hasPermission } = useAuthStore();
   const { t } = useLanguageStore();
@@ -43,65 +46,150 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
 
   const menuGroups = [
     {
-      category: 'RINGKASAN',
+      category: "RINGKASAN",
       items: [
-        { id: 'dashboard', label: t.dashboard, icon: LayoutDashboard, perm: null },
-      ]
+        {
+          id: "dashboard",
+          label: t.dashboard,
+          icon: LayoutDashboard,
+          perm: null,
+        },
+      ],
     },
     {
-      category: 'MANAJEMEN HR',
+      category: "MANAJEMEN HR",
       items: [
-        { id: 'employees', label: t.employees, icon: Users, perm: null },
-        { id: 'orgChart', label: 'Struktur Organisasi', icon: Network, perm: null },
-        { id: 'documents', label: t.documentsTitle, icon: FileText, perm: null },
-        { id: 'helpdesk', label: t.helpdeskTitle, icon: LifeBuoy, perm: null },
-        { id: 'branches', label: 'Cabang Perusahaan', icon: Building2, perm: null },
-        { id: 'recruitment', label: 'Perekrutan (ATS)', icon: UserPlus, perm: 'manage_users' },
-        { id: 'offboarding', label: 'Offboarding & SP', icon: UserX, perm: 'manage_users' },
-        { id: 'trainings', label: 'Pelatihan & Sertifikat', icon: GraduationCap, perm: null },
-        { id: 'kpi', label: t.kpi, icon: Award, perm: null },
-      ]
+        { id: "employees", label: t.employees, icon: Users, perm: null },
+        {
+          id: "orgChart",
+          label: "Struktur Organisasi",
+          icon: Network,
+          perm: null,
+        },
+        {
+          id: "documents",
+          label: t.documentsTitle,
+          icon: FileText,
+          perm: null,
+        },
+        { id: "helpdesk", label: t.helpdeskTitle, icon: LifeBuoy, perm: null },
+        {
+          id: "branches",
+          label: "Cabang Perusahaan",
+          icon: Building2,
+          perm: null,
+        },
+        {
+          id: "recruitment",
+          label: "Perekrutan (ATS)",
+          icon: UserPlus,
+          perm: "manage_users",
+        },
+        {
+          id: "offboarding",
+          label: "Offboarding & SP",
+          icon: UserX,
+          perm: "manage_users",
+        },
+        {
+          id: "trainings",
+          label: "Pelatihan & Sertifikat",
+          icon: GraduationCap,
+          perm: null,
+        },
+        { id: "kpi", label: t.kpi, icon: Award, perm: null },
+      ],
     },
     {
-      category: 'PENGGAJIAN & KLAIM',
+      category: "PENGGAJIAN & KLAIM",
       items: [
-        { id: 'payroll', label: 'Slip Gaji (Payroll)', icon: Wallet, perm: null },
-        { id: 'overtime', label: 'Upah Lembur (SPL)', icon: Receipt, perm: null },
-        { id: 'reimbursements', label: 'Klaim Reimbursement', icon: CreditCard, perm: null },
-      ]
+        {
+          id: "payroll",
+          label: "Slip Gaji (Payroll)",
+          icon: Wallet,
+          perm: null,
+        },
+        {
+          id: "overtime",
+          label: "Upah Lembur (SPL)",
+          icon: Receipt,
+          perm: null,
+        },
+        {
+          id: "reimbursements",
+          label: "Klaim Reimbursement",
+          icon: CreditCard,
+          perm: null,
+        },
+      ],
     },
     {
-      category: 'WAKTU & ABSENSI',
+      category: "WAKTU & ABSENSI",
       items: [
-        { id: 'attendance', label: t.attendance, icon: Clock, perm: null },
-        { id: 'fieldVisits', label: t.fieldVisitsTitle, icon: MapPin, perm: null },
-        { id: 'shifts', label: 'Shift Kerja', icon: FileCheck2, perm: null },
-        { id: 'shiftSwap', label: t.shiftSwapTitle, icon: ArrowLeftRight, perm: null },
-        { id: 'leave', label: t.leave, icon: CalendarDays, perm: null },
-      ]
+        { id: "attendance", label: t.attendance, icon: Clock, perm: null },
+        {
+          id: "fieldVisits",
+          label: t.fieldVisitsTitle,
+          icon: MapPin,
+          perm: null,
+        },
+        { id: "shifts", label: "Shift Kerja", icon: FileCheck2, perm: null },
+        {
+          id: "shiftSwap",
+          label: t.shiftSwapTitle,
+          icon: ArrowLeftRight,
+          perm: null,
+        },
+        { id: "leave", label: t.leave, icon: CalendarDays, perm: null },
+      ],
     },
     {
-      category: 'OPERASIONAL & ASET',
+      category: "OPERASIONAL & ASET",
       items: [
-        { id: 'schedules', label: 'Agenda & Ruang Rapat', icon: CalendarDays, perm: null },
-        { id: 'assets', label: t.assets, icon: Box, perm: 'manage_assets' },
-        { id: 'announcements', label: t.announcements, icon: Megaphone, perm: null },
-      ]
+        {
+          id: "schedules",
+          label: "Agenda & Ruang Rapat",
+          icon: CalendarDays,
+          perm: null,
+        },
+        { id: "assets", label: t.assets, icon: Box, perm: "manage_assets" },
+        {
+          id: "announcements",
+          label: t.announcements,
+          icon: Megaphone,
+          perm: null,
+        },
+      ],
     },
     {
-      category: 'PENGATURAN SISTEM',
+      category: "PENGATURAN SISTEM",
       items: [
-        { id: 'roles', label: t.roles, icon: ShieldCheck, perm: 'manage_roles' },
-        { id: 'auditLogs', label: 'Audit Log Trail', icon: ShieldCheck, perm: 'manage_settings' },
-        { id: 'settings', label: t.settings, icon: Sliders, perm: 'manage_settings' },
-      ]
-    }
+        {
+          id: "roles",
+          label: t.roles,
+          icon: ShieldCheck,
+          perm: "manage_roles",
+        },
+        {
+          id: "auditLogs",
+          label: "Audit Log Trail",
+          icon: ShieldCheck,
+          perm: "manage_settings",
+        },
+        {
+          id: "settings",
+          label: t.settings,
+          icon: Sliders,
+          perm: "manage_settings",
+        },
+      ],
+    },
   ];
 
   return (
     <aside
       className={`h-full transition-all duration-300 p-4 lg:p-5 flex flex-col justify-between shrink-0 bg-white dark:bg-slate-900 rounded-[32px] shadow-sm overflow-hidden border-none ${
-        isCollapsed ? 'w-20' : 'w-64'
+        isCollapsed ? "w-20" : "w-64"
       }`}
     >
       <div className="flex flex-col flex-1 min-h-0">
@@ -121,20 +209,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
           {/* Minimize / Expand Toggle Icon */}
           <button
             onClick={toggleSidebar}
-            aria-label={isCollapsed ? 'Expand Sidebar Navigation' : 'Minimize Sidebar Navigation'}
+            aria-label={
+              isCollapsed
+                ? "Expand Sidebar Navigation"
+                : "Minimize Sidebar Navigation"
+            }
             className={`p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all ${
-              isCollapsed ? 'mx-auto' : ''
+              isCollapsed ? "mx-auto" : ""
             }`}
-            title={isCollapsed ? 'Expand Sidebar' : 'Minimize Sidebar'}
+            title={isCollapsed ? "Expand Sidebar" : "Minimize Sidebar"}
           >
-            {isCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+            {isCollapsed ? (
+              <PanelLeftOpen size={18} />
+            ) : (
+              <PanelLeftClose size={18} />
+            )}
           </button>
         </div>
 
         {/* Floating Categorized Menu Card Container */}
-        <nav role="navigation" aria-label="Sidebar Menu Navigation" className={`flex-1 overflow-y-auto space-y-3 p-2 rounded-3xl scrollbar-none ${!isCollapsed ? 'bg-slate-50/80 dark:bg-slate-950/60' : ''}`}>
+        <nav
+          role="navigation"
+          aria-label="Sidebar Menu Navigation"
+          className={`flex-1 overflow-y-auto space-y-3 p-2 rounded-3xl scrollbar-none ${!isCollapsed ? "bg-slate-50/80 dark:bg-slate-950/60" : ""}`}
+        >
           {menuGroups.map((group, groupIdx) => {
-            const visibleItems = group.items.filter(item => !item.perm || hasPermission(item.perm));
+            const visibleItems = group.items.filter(
+              (item) => !item.perm || hasPermission(item.perm),
+            );
             if (visibleItems.length === 0) return null;
 
             return (
@@ -156,15 +258,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                       onClick={() => setActiveTab(item.id)}
                       title={isCollapsed ? item.label : undefined}
                       className={`w-full flex items-center text-left gap-3 py-2.5 rounded-2xl font-bold text-xs transition-all ${
-                        isCollapsed ? 'justify-center px-0' : 'px-3.5'
+                        isCollapsed ? "justify-center px-0" : "px-3.5"
                       } ${
                         isActive
-                          ? 'bg-[#2563eb] text-white shadow-md shadow-[#2563eb]/25'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800/60'
+                          ? "bg-[#2563eb] text-white shadow-md shadow-[#2563eb]/25"
+                          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800/60"
                       }`}
                     >
-                      <Icon size={18} className={`shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                      {!isCollapsed && <span className="text-left leading-tight flex-1">{item.label}</span>}
+                      <Icon
+                        size={18}
+                        className={`shrink-0 ${isActive ? "text-white" : "text-slate-400"}`}
+                      />
+                      {!isCollapsed && (
+                        <span className="text-left leading-tight flex-1">
+                          {item.label}
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -175,7 +284,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
       </div>
 
       {/* Bottom Profile Pill Card */}
-      {user && (
+      {/* Currently Hide, duplicate UI/UX with Navbar*/}
+      {/* {user && (
         <div className={`mt-4 shrink-0 ${isCollapsed ? 'text-center' : ''}`}>
           {isCollapsed ? (
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#2563eb] to-blue-500 flex items-center justify-center text-white font-bold text-xs mx-auto shadow-sm">
@@ -196,8 +306,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
             </div>
           )}
         </div>
-      )}
+      )} */}
     </aside>
   );
 };
-
