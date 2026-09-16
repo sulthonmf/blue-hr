@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, SafeAreaView, StatusBar as RNStatusBar, Platform, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, StatusBar as RNStatusBar, Platform, ActivityIndicator } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useAuthStore } from './src/stores/useAuthStore';
 import { useHRStore } from './src/stores/useHRStore';
@@ -58,21 +59,25 @@ export default function App() {
   // Render splash/loading screen while checking stored credentials
   if (isInitializing) {
     return (
-      <View style={[styles.splashContainer, isDark ? styles.bgDark : styles.bgLight]}>
-        <StatusBar style={isDark ? 'light' : 'dark'} translucent />
-        <ActivityIndicator size="large" color="#2563eb" />
-      </View>
+      <SafeAreaProvider>
+        <View style={[styles.splashContainer, isDark ? styles.bgDark : styles.bgLight]}>
+          <StatusBar style={isDark ? 'light' : 'dark'} translucent />
+          <ActivityIndicator size="large" color="#2563eb" />
+        </View>
+      </SafeAreaProvider>
     );
   }
 
   if (!token) {
     return (
-      <SafeAreaView style={[styles.container, isDark ? styles.bgDark : styles.bgLight, styles.safeTopPadding]}>
-        <StatusBar style={isDark ? 'light' : 'dark'} translucent />
-        <LoginScreen />
-        <GlobalLoadingOverlay />
-        <ErrorPopupModal />
-      </SafeAreaView>
+      <SafeAreaProvider>
+        <SafeAreaView style={[styles.container, isDark ? styles.bgDark : styles.bgLight, styles.safeTopPadding]}>
+          <StatusBar style={isDark ? 'light' : 'dark'} translucent />
+          <LoginScreen />
+          <GlobalLoadingOverlay />
+          <ErrorPopupModal />
+        </SafeAreaView>
+      </SafeAreaProvider>
     );
   }
 
@@ -118,27 +123,29 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, isDark ? styles.bgDark : styles.bgLight, styles.safeTopPadding]}>
-      <StatusBar style={isDark ? 'light' : 'dark'} translucent />
+    <SafeAreaProvider>
+      <SafeAreaView style={[styles.container, isDark ? styles.bgDark : styles.bgLight, styles.safeTopPadding]}>
+        <StatusBar style={isDark ? 'light' : 'dark'} translucent />
 
-      {/* Clean Architecture Header */}
-      <Header activeTab={activeTab} onOpenNotif={() => setIsNotifOpen(true)} />
+        {/* Clean Architecture Header */}
+        <Header activeTab={activeTab} onOpenNotif={() => setIsNotifOpen(true)} />
 
-      {/* Main Screen Container */}
-      <View style={styles.screenContainer}>{renderActiveScreen()}</View>
+        {/* Main Screen Container */}
+        <View style={styles.screenContainer}>{renderActiveScreen()}</View>
 
-      {/* Native Role-Based Bottom Navigation Tabs */}
-      <BottomNav activeTab={activeTab} onSelectTab={setActiveTab} />
+        {/* Native Role-Based Bottom Navigation Tabs */}
+        <BottomNav activeTab={activeTab} onSelectTab={setActiveTab} />
 
-      {/* Modals & Global Overlays */}
-      <ClockInModal isOpen={isClockInOpen} onClose={() => setIsClockInOpen(false)} />
-      <LeaveModal isOpen={isLeaveOpen} onClose={() => setIsLeaveOpen(false)} />
-      <NotificationCenterModal isOpen={isNotifOpen} onClose={() => setIsNotifOpen(false)} />
-      <AvatarUploadModal isOpen={isAvatarOpen} onClose={() => setIsAvatarOpen(false)} />
-      <AnnouncementDetailModal isOpen={isAnnounceOpen} onClose={() => setIsAnnounceOpen(false)} />
-      <GlobalLoadingOverlay />
-      <ErrorPopupModal />
-    </SafeAreaView>
+        {/* Modals & Global Overlays */}
+        <ClockInModal isOpen={isClockInOpen} onClose={() => setIsClockInOpen(false)} />
+        <LeaveModal isOpen={isLeaveOpen} onClose={() => setIsLeaveOpen(false)} />
+        <NotificationCenterModal isOpen={isNotifOpen} onClose={() => setIsNotifOpen(false)} />
+        <AvatarUploadModal isOpen={isAvatarOpen} onClose={() => setIsAvatarOpen(false)} />
+        <AnnouncementDetailModal isOpen={isAnnounceOpen} onClose={() => setIsAnnounceOpen(false)} />
+        <GlobalLoadingOverlay />
+        <ErrorPopupModal />
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

@@ -38,14 +38,26 @@ export const Navbar: React.FC<{
 
   const getNotifMeta = (type: string) => {
     switch (type) {
-      case 'LEAVE':
-        return { icon: Calendar, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/60' };
-      case 'ATTENDANCE':
-        return { icon: Clock, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/60' };
-      case 'ANNOUNCEMENT':
-        return { icon: Megaphone, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/60' };
+      case "LEAVE":
+        return {
+          icon: Calendar,
+          color: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/60",
+        };
+      case "ATTENDANCE":
+        return {
+          icon: Clock,
+          color: "text-purple-500 bg-purple-50 dark:bg-purple-950/60",
+        };
+      case "ANNOUNCEMENT":
+        return {
+          icon: Megaphone,
+          color: "text-blue-500 bg-blue-50 dark:bg-blue-950/60",
+        };
       default:
-        return { icon: Bell, color: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-950/60' };
+        return {
+          icon: Bell,
+          color: "text-indigo-500 bg-indigo-50 dark:bg-indigo-950/60",
+        };
     }
   };
 
@@ -54,7 +66,9 @@ export const Navbar: React.FC<{
       {/* Search Input Bar */}
       <div className="flex items-center gap-2 flex-1 max-w-xl">
         <div className="relative flex-1">
-          <label htmlFor="global-search" className="sr-only">Search</label>
+          <label htmlFor="global-search" className="sr-only">
+            Search
+          </label>
           <Search
             size={16}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
@@ -97,15 +111,23 @@ export const Navbar: React.FC<{
           >
             <Plus size={16} />
             <span>{t.addNewEntry || "Tambah Data Baru"}</span>
-            <ChevronDown size={14} className={`transition-transform ${isActionMenuOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              size={14}
+              className={`transition-transform ${isActionMenuOpen ? "rotate-180" : ""}`}
+            />
           </button>
 
           {isActionMenuOpen && (
             <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-50 p-2 space-y-1 font-sans text-xs animate-in fade-in zoom-in-95">
-              <p className="px-3 py-1.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">TINDAKAN CEPAT</p>
-              
+              <p className="px-3 py-1.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                TINDAKAN CEPAT
+              </p>
+
               <button
-                onClick={() => { onNavigate?.("employees"); setIsActionMenuOpen(false); }}
+                onClick={() => {
+                  onNavigate?.("employees");
+                  setIsActionMenuOpen(false);
+                }}
                 className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
               >
                 <Users size={14} className="text-blue-600" />
@@ -113,7 +135,10 @@ export const Navbar: React.FC<{
               </button>
 
               <button
-                onClick={() => { onNavigate?.("attendance"); setIsActionMenuOpen(false); }}
+                onClick={() => {
+                  onNavigate?.("attendance");
+                  setIsActionMenuOpen(false);
+                }}
                 className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
               >
                 <Clock size={14} className="text-emerald-600" />
@@ -121,7 +146,10 @@ export const Navbar: React.FC<{
               </button>
 
               <button
-                onClick={() => { onNavigate?.("schedules"); setIsActionMenuOpen(false); }}
+                onClick={() => {
+                  onNavigate?.("schedules");
+                  setIsActionMenuOpen(false);
+                }}
                 className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
               >
                 <Calendar size={14} className="text-purple-600" />
@@ -129,7 +157,10 @@ export const Navbar: React.FC<{
               </button>
 
               <button
-                onClick={() => { onNavigate?.("announcements"); setIsActionMenuOpen(false); }}
+                onClick={() => {
+                  onNavigate?.("announcements");
+                  setIsActionMenuOpen(false);
+                }}
                 className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
               >
                 <Megaphone size={14} className="text-amber-600" />
@@ -137,7 +168,10 @@ export const Navbar: React.FC<{
               </button>
 
               <button
-                onClick={() => { onNavigate?.("reimbursements"); setIsActionMenuOpen(false); }}
+                onClick={() => {
+                  onNavigate?.("reimbursements");
+                  setIsActionMenuOpen(false);
+                }}
                 className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
               >
                 <CreditCard size={14} className="text-cyan-600" />
@@ -145,7 +179,10 @@ export const Navbar: React.FC<{
               </button>
 
               <button
-                onClick={() => { onNavigate?.("offboarding"); setIsActionMenuOpen(false); }}
+                onClick={() => {
+                  onNavigate?.("offboarding");
+                  setIsActionMenuOpen(false);
+                }}
                 className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold flex items-center gap-2 transition-all"
               >
                 <LogOut size={14} className="text-rose-600" />
@@ -234,7 +271,9 @@ export const Navbar: React.FC<{
 
               <div className="space-y-2 mt-3 max-h-80 overflow-y-auto pr-1">
                 {notifications.length === 0 ? (
-                  <p className="text-xs text-slate-400 text-center py-6">Belum ada notifikasi.</p>
+                  <p className="text-xs text-slate-400 text-center py-6">
+                    Belum ada notifikasi.
+                  </p>
                 ) : (
                   notifications.map((n) => {
                     const meta = getNotifMeta(n.type);
@@ -248,7 +287,9 @@ export const Navbar: React.FC<{
                             : "bg-blue-50/30 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900/40"
                         }`}
                       >
-                        <div className={`p-2 rounded-xl shrink-0 ${meta.color}`}>
+                        <div
+                          className={`p-2 rounded-xl shrink-0 ${meta.color}`}
+                        >
                           <Icon size={16} />
                         </div>
 
@@ -258,7 +299,12 @@ export const Navbar: React.FC<{
                               {n.title}
                             </h5>
                             <span className="text-[10px] text-slate-400 font-medium">
-                              {n.created_at ? new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Hari Ini'}
+                              {n.created_at
+                                ? new Date(n.created_at).toLocaleTimeString(
+                                    [],
+                                    { hour: "2-digit", minute: "2-digit" },
+                                  )
+                                : "Hari Ini"}
                             </span>
                           </div>
                           <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
@@ -284,7 +330,7 @@ export const Navbar: React.FC<{
               <p className="text-xs font-extrabold text-slate-900 dark:text-white leading-tight flex items-center gap-1.5">
                 {user.name.split(" ")[0]}
                 <span className="text-[9px] px-1.5 py-0.5 bg-blue-100 dark:bg-blue-950 text-[#2563eb] dark:text-blue-400 rounded-md font-extrabold">
-                  EMP-{String(user.id).padStart(4, '0')}
+                  EMP-{String(user.id).padStart(4, "0")}
                 </span>
               </p>
               <p className="text-[10px] text-slate-400 font-medium leading-none mt-0.5">
