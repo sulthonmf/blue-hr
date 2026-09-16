@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { User } from '../types';
 import { setAuthToken } from '../api/client';
-import { storage } from '../utils/storage';
+import { secureStorage } from '../utils/secureStorage';
 
 interface AuthState {
   token: string | null;
@@ -20,9 +20,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   isInitializing: true,
   initAuth: async () => {
     try {
-      const savedToken = await storage.getItem('bluehr_mobile_token');
-      const savedRefreshToken = await storage.getItem('bluehr_mobile_refresh_token');
-      const savedUserRaw = await storage.getItem('bluehr_mobile_user');
+      const savedToken = await secureStorage.getItem('bluehr_mobile_token');
+      const savedRefreshToken = await secureStorage.getItem('bluehr_mobile_refresh_token');
+      const savedUserRaw = await secureStorage.getItem('bluehr_mobile_user');
       const savedUser = savedUserRaw ? JSON.parse(savedUserRaw) : null;
 
       if (savedToken) {
@@ -43,18 +43,18 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAuth: async (token, user, refreshToken) => {
     setAuthToken(token);
     set((state) => ({ token, user, refreshToken: refreshToken || state.refreshToken }));
-    await storage.setItem('bluehr_mobile_token', token);
+    await secureStorage.setItem('bluehr_mobile_token', token);
     if (refreshToken) {
-      await storage.setItem('bluehr_mobile_refresh_token', refreshToken);
+      await secureStorage.setItem('bluehr_mobile_refresh_token', refreshToken);
     }
-    await storage.setItem('bluehr_mobile_user', JSON.stringify(user));
+    await secureStorage.setItem('bluehr_mobile_user', JSON.stringify(user));
   },
   logout: async () => {
     setAuthToken(null);
     set({ token: null, refreshToken: null, user: null });
-    await storage.removeItem('bluehr_mobile_token');
-    await storage.removeItem('bluehr_mobile_refresh_token');
-    await storage.removeItem('bluehr_mobile_user');
+    await secureStorage.removeItem('bluehr_mobile_token');
+    await secureStorage.removeItem('bluehr_mobile_refresh_token');
+    await secureStorage.removeItem('bluehr_mobile_user');
   },
 }));
 

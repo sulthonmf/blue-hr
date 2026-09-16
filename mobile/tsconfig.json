@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
+    "jsx": "react-native",
     "module": "esnext"
   },
   "extends": "expo/tsconfig.base"
 }
+

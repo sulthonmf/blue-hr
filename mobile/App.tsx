@@ -61,7 +61,7 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <View style={[styles.splashContainer, isDark ? styles.bgDark : styles.bgLight]}>
-          <StatusBar style={isDark ? 'light' : 'dark'} translucent />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <ActivityIndicator size="large" color="#2563eb" />
         </View>
       </SafeAreaProvider>
@@ -72,7 +72,7 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <SafeAreaView style={[styles.container, isDark ? styles.bgDark : styles.bgLight, styles.safeTopPadding]}>
-          <StatusBar style={isDark ? 'light' : 'dark'} translucent />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <LoginScreen />
           <GlobalLoadingOverlay />
           <ErrorPopupModal />
@@ -125,7 +125,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, isDark ? styles.bgDark : styles.bgLight, styles.safeTopPadding]}>
-        <StatusBar style={isDark ? 'light' : 'dark'} translucent />
+        <StatusBar style={isDark ? 'light' : 'dark'} />
 
         {/* Clean Architecture Header */}
         <Header activeTab={activeTab} onOpenNotif={() => setIsNotifOpen(true)} />

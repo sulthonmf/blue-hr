@@ -1,8 +1,18 @@
+(globalThis as any).__DEV__ = true;
+
 import { describe, it, expect, vi } from 'vitest';
 
-// Mock react-native and async-storage before importing stores
+// Mock react-native, async-storage, and expo-secure-store before importing stores
 vi.mock('react-native', () => ({
   Platform: { OS: 'ios' }
+}));
+
+vi.mock('expo-secure-store', () => ({
+  isAvailableAsync: vi.fn().mockResolvedValue(true),
+  getItemAsync: vi.fn().mockResolvedValue(null),
+  setItemAsync: vi.fn().mockResolvedValue(undefined),
+  deleteItemAsync: vi.fn().mockResolvedValue(undefined),
+  AFTER_FIRST_UNLOCK: 'AFTER_FIRST_UNLOCK'
 }));
 
 vi.mock('@react-native-async-storage/async-storage', () => ({
