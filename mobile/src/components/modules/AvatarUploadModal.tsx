@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
-  card: { padding: 24, borderRadius: 28 },
+  card: { padding: 24, borderRadius: 5 },
   cardDark: {
     backgroundColor: "#0f172a",
     borderColor: "#1e293b",
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   uploadDeviceBtn: {
     backgroundColor: "#2563eb",
     paddingVertical: 12,
-    borderRadius: 16,
+    borderRadius: 5,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -214,13 +214,13 @@ const styles = StyleSheet.create({
   presetCircle: {
     width: 54,
     height: 54,
-    borderRadius: 27,
+    borderRadius: 57,
     borderWidth: 2,
     borderColor: "transparent",
     padding: 2,
   },
   activePreset: { borderColor: "#2563eb" },
-  presetImg: { width: "100%", height: "100%", borderRadius: 25 },
+  presetImg: { width: "100%", height: "100%", borderRadius: 55 },
   input: {
     paddingHorizontal: 14,
     paddingVertical: 10,

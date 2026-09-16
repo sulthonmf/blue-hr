@@ -655,7 +655,7 @@ export const TeamMembersRibbon: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  card: { padding: 18, borderRadius: 28, marginBottom: 14, borderWidth: 1 },
+  card: { padding: 18, borderRadius: 5, marginBottom: 14, borderWidth: 1 },
   cardDark: { backgroundColor: "#0f172a", borderColor: "#1e293b" },
   cardLight: { backgroundColor: "#ffffff", borderColor: "#e2e8f0" },
   textDark: { color: "#ffffff" },
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
   noticeIconBox: {
     width: 42,
     height: 42,
-    borderRadius: 21,
+    borderRadius: 51,
     backgroundColor: "rgba(99, 102, 241, 0.15)",
     justifyContent: "center",
     alignItems: "center",
@@ -918,7 +918,7 @@ const styles = StyleSheet.create({
   // Travel Banner
   travelBanner: {
     backgroundColor: "#2563eb",
-    borderRadius: 24,
+    borderRadius: 54,
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -983,7 +983,7 @@ const styles = StyleSheet.create({
   // Team Ribbon Styles
   teamRibbon: {
     backgroundColor: "rgba(37, 99, 235, 0.08)",
-    borderRadius: 20,
+    borderRadius: 50,
     padding: 12,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -999,7 +999,7 @@ const styles = StyleSheet.create({
   overlapAvatar: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 5,
     backgroundColor: "#ffffff",
     borderWidth: 2,
     borderColor: "#2563eb",
@@ -1029,7 +1029,10 @@ export const QuickHRActionsWidget: React.FC<{
   const { t } = useLanguageStore();
   const isDark = theme === "dark";
 
-  const isHR = user?.permissions?.includes("manage_users") || user?.role_name === "Admin" || user?.role_name === "HR Manager";
+  const isHR =
+    user?.permissions?.includes("manage_users") ||
+    user?.role_name === "Admin" ||
+    user?.role_name === "HR Manager";
 
   const allActions = [
     {
@@ -1146,7 +1149,7 @@ export const QuickHRActionsWidget: React.FC<{
               width: "31%",
               paddingVertical: 10,
               paddingHorizontal: 4,
-              borderRadius: 16,
+              borderRadius: 5,
               backgroundColor: isDark ? "#020617" : act.bg,
               alignItems: "center",
               justifyContent: "center",
@@ -1272,7 +1275,7 @@ export const MeetingScheduleWidget: React.FC = () => {
         style={{
           padding: 10,
           backgroundColor: isDark ? "#020617" : "#f8fafc",
-          // borderRadius: 16,
+          // borderRadius: 5,
           // borderLeftWidth: 4,
           // borderLeftColor: accentColor,
         }}

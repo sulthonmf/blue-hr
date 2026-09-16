@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   textDark: { color: "#ffffff" },
   textLight: { color: "#0f172a" },
   content: { padding: 16, gap: 16 },
-  card: { borderRadius: 20, padding: 16, borderWidth: 1 },
+  card: { borderRadius: 50, padding: 16, borderWidth: 1 },
   cardDark: { backgroundColor: "#1e293b", borderColor: "#334155" },
   cardLight: { backgroundColor: "#ffffff", borderColor: "#e2e8f0" },
   cardTitle: { fontSize: 16, fontWeight: "800", marginBottom: 12 },
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   submitBtnText: { color: "#ffffff", fontWeight: "800", fontSize: 14 },
   sectionHeader: { fontSize: 14, fontWeight: "800", marginTop: 8 },
   historyCard: {
-    borderRadius: 16,
+    borderRadius: 5,
     padding: 14,
     flexDirection: "row",
     alignItems: "center",
