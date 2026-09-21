@@ -717,8 +717,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         onClose={() => setIsCheckoutModalOpen(false)}
         selectedPlan={selectedPlanForCheckout}
         billingCycle={billingCycle}
-        onPaymentSuccess={() => {
-          handleQuickDemo("admin");
+        onPaymentSuccess={(details) => {
+          const planId = (selectedPlanForCheckout?.id as any) || "starter";
+          useAuthStore.getState().loginAsDemo("admin", planId);
+          onGoToDashboard();
         }}
       />
     </div>

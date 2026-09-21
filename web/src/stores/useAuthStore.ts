@@ -22,11 +22,22 @@ export interface AuthUser {
   permissions: string[];
 }
 
+export interface SubscriptionPlan {
+  planId: 'starter' | 'business' | 'enterprise';
+  planName: string;
+  status: 'active';
+  activatedAt: string;
+  orderId?: string;
+}
+
 interface AuthState {
   token: string | null;
   user: AuthUser | null;
+  subscription: SubscriptionPlan | null;
   setAuth: (token: string, user: AuthUser) => void;
-  loginAsDemo: (role: 'admin' | 'employee' | 'manager') => void;
+  setSubscription: (subscription: SubscriptionPlan | null) => void;
+  getUnlockedTabs: () => string[];
+  loginAsDemo: (role?: 'admin' | 'employee' | 'manager', planId?: 'starter' | 'business' | 'enterprise') => void;
   logout: () => Promise<void>;
   refreshAuth: () => Promise<boolean>;
   hasPermission: (permissionCode: string) => boolean;
@@ -35,6 +46,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set, get) => ({
   token: localStorage.getItem('bluehr_token'),
   user: JSON.parse(localStorage.getItem('bluehr_user') || 'null'),
+  subscription: JSON.parse(localStorage.getItem('bluehr_subscription') || 'null'),
 
   setAuth: (token: string, user: AuthUser) => {
     localStorage.setItem('bluehr_token', token);
@@ -42,7 +54,56 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ token, user });
   },
 
-  loginAsDemo: (role: 'admin' | 'employee' | 'manager' = 'admin') => {
+  setSubscription: (subscription: SubscriptionPlan | null) => {
+    if (subscription) {
+      localStorage.setItem('bluehr_subscription', JSON.stringify(subscription));
+    } else {
+      localStorage.removeItem('bluehr_subscription');
+    }
+    set({ subscription });
+  },
+
+  getUnlockedTabs: () => {
+    const sub = get().subscription;
+    if (!sub) {
+      // Default demo mode without payment: only 4 basic tabs
+      return ["dashboard", "attendance", "leave", "payroll"];
+    }
+
+    if (sub.planId === 'starter') {
+      return ["dashboard", "attendance", "leave", "schedules", "announcements", "shifts"];
+    }
+
+    if (sub.planId === 'business') {
+      return [
+        "dashboard", "attendance", "leave", "payroll", "schedules",
+        "overtime", "reimbursements", "shifts", "shiftSwap", "kpi",
+        "documents", "employees", "assets", "announcements"
+      ];
+    }
+
+    if (sub.planId === 'enterprise') {
+      // All modules unlocked!
+      return ["all"];
+    }
+
+    return ["dashboard", "attendance", "leave", "payroll"];
+  },
+
+  loginAsDemo: (role: 'admin' | 'employee' | 'manager' = 'admin', planId?: 'starter' | 'business' | 'enterprise') => {
+    if (planId) {
+      const planNames: Record<string, string> = {
+        starter: "Starter Plan",
+        business: "Growth Business Plan",
+        enterprise: "Corporate Enterprise Plan"
+      };
+      get().setSubscription({
+        planId,
+        planName: planNames[planId] || "Subscription Plan",
+        status: "active",
+        activatedAt: new Date().toISOString()
+      });
+    }
     const demoUsers: Record<string, AuthUser> = {
       admin: {
         id: 1,

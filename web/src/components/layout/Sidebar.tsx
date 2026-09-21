@@ -255,8 +255,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   const isActive = activeTab === item.id;
                   const token = useAuthStore.getState().token;
                   const isDemoMode = token?.startsWith("demo_jwt_token_");
-                  const isUnlockedDemo = ["dashboard", "attendance", "leave", "payroll"].includes(item.id);
-                  const isLockedInDemo = isDemoMode && !isUnlockedDemo;
+                  const unlockedTabs = useAuthStore.getState().getUnlockedTabs();
+                  const isUnlocked = unlockedTabs.includes("all") || unlockedTabs.includes(item.id);
+                  const isLockedInDemo = isDemoMode && !isUnlocked;
 
                   return (
                     <button

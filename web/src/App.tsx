@@ -92,7 +92,8 @@ export const App: React.FC = () => {
   }
 
   const isDemoMode = token?.startsWith("demo_jwt_token_");
-  const DEMO_UNLOCKED_TABS = ["dashboard", "attendance", "leave", "payroll"];
+  const subscription = useAuthStore((s) => s.subscription);
+  const unlockedTabs = useAuthStore((s) => s.getUnlockedTabs());
 
   const getModuleName = (tab: string) => {
     const map: Record<string, string> = {
@@ -177,7 +178,8 @@ export const App: React.FC = () => {
 
   const renderTabContent = () => {
     const content = getRawTabContent();
-    if (isDemoMode && !DEMO_UNLOCKED_TABS.includes(activeTab)) {
+    const isUnlocked = unlockedTabs.includes("all") || unlockedTabs.includes(activeTab);
+    if (isDemoMode && !isUnlocked) {
       return (
         <DemoBlurOverlay
           moduleName={getModuleName(activeTab)}
@@ -208,6 +210,12 @@ export const App: React.FC = () => {
             <span className="text-cyan-200 font-bold bg-blue-950/80 px-2 py-0.5 rounded border border-blue-500/40">
               Role: {user?.role_name || "Demo User"} ({user?.name})
             </span>
+            {subscription && (
+              <span className="text-emerald-300 font-bold bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/40 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                Paket: {subscription.planName}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-2">

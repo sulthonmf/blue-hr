@@ -10,6 +10,8 @@ import {
   ExternalLink,
   AlertCircle,
   CreditCard,
+  Clock,
+  Sparkles,
 } from "lucide-react";
 
 export interface PlanItem {
@@ -38,6 +40,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 }) => {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [isPendingMidtrans, setIsPendingMidtrans] = useState<boolean>(false);
   const [transactionRef, setTransactionRef] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [redirectUrl, setRedirectUrl] = useState<string>("");
@@ -104,19 +107,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           onSuccess: (result: any) => {
             console.log("[Midtrans Payment Success]:", result);
             setIsProcessing(false);
+            setIsPendingMidtrans(false);
             setIsSuccess(true);
             setTransactionRef(result.order_id || data.orderId);
           },
           onPending: (result: any) => {
             console.log("[Midtrans Payment Pending]:", result);
             setIsProcessing(false);
-            setIsSuccess(true);
+            // DO NOT auto mark as success! Show pending status with bypass button
+            setIsPendingMidtrans(true);
             setTransactionRef(result.order_id || data.orderId);
           },
           onError: (err: any) => {
             console.error("[Midtrans Payment Error]:", err);
             setIsProcessing(false);
-            setErrorMessage("Pembayaran gagal atau dibatalkan oleh gateway Midtrans.");
+            setErrorMessage("Pembayaran gagal diproses oleh Midtrans.");
           },
           onClose: () => {
             console.log("[Midtrans Popup Closed]");
@@ -136,8 +141,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }
   };
 
+  // Instant Bypass Handler for Sandbox Testing
+  const handleInstantBypass = () => {
+    const fakeOrder = "SANDBOX-BYPASS-" + Math.floor(100000 + Math.random() * 900000);
+    setTransactionRef(fakeOrder);
+    setIsProcessing(false);
+    setIsPendingMidtrans(false);
+    setIsSuccess(true);
+  };
+
   const handleResetAndClose = () => {
     setIsSuccess(false);
+    setIsPendingMidtrans(false);
     setIsProcessing(false);
     setErrorMessage("");
     setRedirectUrl("");
@@ -171,6 +186,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
         {/* Modal Body */}
         <div className="p-6 md:p-8 overflow-y-auto flex-1">
+          {/* 1. SUCCESS VIEW */}
           {isSuccess ? (
             <div className="py-6 text-center flex flex-col items-center">
               <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950/60 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4 animate-bounce">
@@ -180,7 +196,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 Pembayaran Berhasil Diterima!
               </h3>
               <p className="text-slate-600 dark:text-slate-300 text-sm mt-2 max-w-md">
-                Terima kasih! Akun Enterprise BlueHR untuk <span className="font-semibold text-blue-600 dark:text-blue-400">{buyerInfo.companyName || "Perusahaan Anda"}</span> telah aktif.
+                Selamat! Paket <span className="font-bold text-blue-600 dark:text-blue-400">{selectedPlan.name}</span> telah aktif untuk <span className="font-semibold text-slate-800 dark:text-slate-200">{buyerInfo.companyName || "Perusahaan Anda"}</span>. Seluruh fitur paket ini kini terbuka di dashboard.
               </p>
 
               {/* Receipt Summary Card */}
@@ -200,8 +216,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <span className="font-semibold text-slate-900 dark:text-white">{selectedPlan.name} ({billingCycle})</span>
                   </div>
                   <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                    <span>Payment Gateway:</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">Midtrans Snap (Sandbox)</span>
+                    <span>Status Transaksi:</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400 uppercase">SETTLEMENT / PAID</span>
                   </div>
                   <div className="flex justify-between text-slate-600 dark:text-slate-400">
                     <span>Waktu Pembayaran:</span>
@@ -222,17 +238,61 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   onClick={() => {
                     handleResetAndClose();
                     if (onPaymentSuccess) {
-                      onPaymentSuccess({ orderId: transactionRef });
+                      onPaymentSuccess({ orderId: transactionRef, plan: selectedPlan.id });
                     }
                   }}
-                  className="flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition-all"
+                  className="flex-1 py-3.5 px-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition-all"
                 >
-                  <span>Buka Dashboard Enterprise</span>
+                  <span>Buka Dashboard ({selectedPlan.name} Terbuka)</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
+          ) : isPendingMidtrans ? (
+            /* 2. PENDING STATUS VIEW WITH INSTANT BYPASS */
+            <div className="py-6 text-center flex flex-col items-center">
+              <div className="w-16 h-16 bg-amber-100 dark:bg-amber-950/60 rounded-full flex items-center justify-center text-amber-600 dark:text-amber-400 mb-4 animate-pulse">
+                <Clock className="w-10 h-10" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
+                Menunggu Pembayaran (Status: PENDING)
+              </h3>
+              <p className="text-slate-600 dark:text-slate-300 text-sm mt-2 max-w-md">
+                Transaksi QRIS / Virtual Account telah diterbitkan di <span className="font-semibold text-blue-600">Midtrans Sandbox</span> dengan ID: <span className="font-mono font-bold">{transactionRef}</span>.
+              </p>
+
+              <div className="my-6 p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-left w-full max-w-md space-y-2">
+                <div className="text-xs font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-amber-500" /> Mode Sandbox Testing:
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Di Sandbox, Anda tidak perlu transfer uang sungguhan. Anda bisa klik <b>"Bypass Bayar Sukses"</b> di bawah untuk langsung mengonfirmasi pembayaran dan membuka semua fitur dashboard.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+                <button
+                  type="button"
+                  onClick={handleInstantBypass}
+                  className="flex-1 py-3.5 px-5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 transition-all"
+                >
+                  <Zap className="w-4 h-4" />
+                  <span>Konfirmasi / Bypass Bayar (Sandbox)</span>
+                </button>
+
+                <a
+                  href="https://simulator.sandbox.midtrans.com/qris"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-3.5 px-4 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                >
+                  <span>Simulator Midtrans</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
           ) : (
+            /* 3. CHECKOUT FORM VIEW */
             <form onSubmit={handlePayWithMidtrans} className="space-y-6">
               
               {errorMessage && (
@@ -348,10 +408,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               {/* Supported Payment Channels via Midtrans */}
               <div className="p-3.5 rounded-2xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40 text-xs">
                 <div className="font-semibold text-blue-800 dark:text-blue-300 mb-1 flex items-center gap-1.5">
-                  <CreditCard className="w-4 h-4 text-blue-600" /> Metode Pembayaran yang Didukung Midtrans:
+                  <CreditCard className="w-4 h-4 text-blue-600" /> Kanal Pembayaran Midtrans Snap:
                 </div>
                 <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
-                  QRIS (GoPay, OVO, ShopeePay, DANA), Virtual Account (BCA, Mandiri, BRI, BNI, Permata), Kartu Kredit/Debit Visa & Mastercard, serta Gerai Alfamart & Indomaret.
+                  Mendukung QRIS (GoPay, OVO, ShopeePay, DANA), Virtual Account (BCA, Mandiri, BRI, BNI, Permata), Kartu Kredit/Debit Visa & Mastercard, serta Alfamart & Indomaret.
                 </p>
               </div>
 
@@ -362,33 +422,30 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   Midtrans Snap 256-bit SSL Protected
                 </div>
 
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                  {redirectUrl && (
-                    <a
-                      href={redirectUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-all"
-                    >
-                      <span>Buka di Tab Baru</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  )}
+                <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={handleInstantBypass}
+                    className="py-3 px-4 rounded-xl border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm"
+                    title="Bypass langsung tanpa perlu scan QRIS untuk testing"
+                  >
+                    <Zap className="w-3.5 h-3.5 text-emerald-500" />
+                    <span>⚡ Bypass Sandbox</span>
+                  </button>
 
                   <button
                     type="submit"
                     disabled={isProcessing}
-                    className="flex-1 sm:flex-initial py-3.5 px-8 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30 transition-all disabled:opacity-50"
+                    className="flex-1 sm:flex-initial py-3.5 px-7 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30 transition-all disabled:opacity-50"
                   >
                     {isProcessing ? (
                       <span className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Membuka Pop-up Midtrans...
+                        Membuka Midtrans Snap...
                       </span>
                     ) : (
                       <>
-                        <Zap className="w-4 h-4 text-cyan-300" />
-                        <span>Bayar Sekarang via Midtrans (Rp {totalPrice.toLocaleString("id-ID")})</span>
+                        <span>Bayar via Midtrans (Rp {totalPrice.toLocaleString("id-ID")})</span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
