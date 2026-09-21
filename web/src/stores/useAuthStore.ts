@@ -1,7 +1,16 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:5000/api/v1';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+
+export const TABS_STARTER = Object.freeze(["dashboard", "attendance", "leave", "schedules", "announcements", "shifts"]);
+export const TABS_BUSINESS = Object.freeze([
+  "dashboard", "attendance", "leave", "payroll", "schedules",
+  "overtime", "reimbursements", "shifts", "shiftSwap", "kpi",
+  "documents", "employees", "assets", "announcements"
+]);
+export const TABS_ENTERPRISE = Object.freeze(["all"]);
+export const TABS_DEFAULT = Object.freeze(["dashboard", "attendance", "leave", "payroll"]);
 
 export interface AuthUser {
   id: number;
@@ -22,11 +31,22 @@ export interface AuthUser {
   permissions: string[];
 }
 
+export interface SubscriptionPlan {
+  planId: 'starter' | 'business' | 'enterprise';
+  planName: string;
+  status: 'active';
+  activatedAt: string;
+  orderId?: string;
+}
+
 interface AuthState {
   token: string | null;
   user: AuthUser | null;
+  subscription: SubscriptionPlan | null;
   setAuth: (token: string, user: AuthUser) => void;
-  loginAsDemo: (role: 'admin' | 'employee' | 'manager') => void;
+  setSubscription: (subscription: SubscriptionPlan | null) => void;
+  getUnlockedTabs: () => readonly string[];
+  loginAsDemo: (role?: 'admin' | 'employee' | 'manager', planId?: 'starter' | 'business' | 'enterprise') => void;
   logout: () => Promise<void>;
   refreshAuth: () => Promise<boolean>;
   hasPermission: (permissionCode: string) => boolean;
@@ -35,6 +55,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set, get) => ({
   token: localStorage.getItem('bluehr_token'),
   user: JSON.parse(localStorage.getItem('bluehr_user') || 'null'),
+  subscription: JSON.parse(localStorage.getItem('bluehr_subscription') || 'null'),
 
   setAuth: (token: string, user: AuthUser) => {
     localStorage.setItem('bluehr_token', token);
@@ -42,7 +63,50 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ token, user });
   },
 
-  loginAsDemo: (role: 'admin' | 'employee' | 'manager' = 'admin') => {
+  setSubscription: (subscription: SubscriptionPlan | null) => {
+    if (subscription) {
+      localStorage.setItem('bluehr_subscription', JSON.stringify(subscription));
+    } else {
+      localStorage.removeItem('bluehr_subscription');
+    }
+    set({ subscription });
+  },
+
+  getUnlockedTabs: () => {
+    const sub = get().subscription;
+    if (!sub) {
+      return TABS_DEFAULT;
+    }
+
+    if (sub.planId === 'starter') {
+      return TABS_STARTER;
+    }
+
+    if (sub.planId === 'business') {
+      return TABS_BUSINESS;
+    }
+
+    if (sub.planId === 'enterprise') {
+      return TABS_ENTERPRISE;
+    }
+
+    return TABS_DEFAULT;
+  },
+
+  loginAsDemo: (role: 'admin' | 'employee' | 'manager' = 'admin', planId?: 'starter' | 'business' | 'enterprise') => {
+    if (planId) {
+      const planNames: Record<string, string> = {
+        starter: "Starter Plan",
+        business: "Growth Business Plan",
+        enterprise: "Corporate Enterprise Plan"
+      };
+      get().setSubscription({
+        planId,
+        planName: planNames[planId] || "Subscription Plan",
+        status: "active",
+        activatedAt: new Date().toISOString()
+      });
+    }
     const demoUsers: Record<string, AuthUser> = {
       admin: {
         id: 1,

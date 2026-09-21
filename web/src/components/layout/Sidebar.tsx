@@ -40,10 +40,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   setActiveTab,
 }) => {
-  const { user } = useAuthStore();
-  const { hasPermission } = useAuthStore();
+  const { user, token, subscription, hasPermission, getUnlockedTabs } = useAuthStore();
   const { t } = useLanguageStore();
   const { isCollapsed, toggleSidebar } = useSidebarStore();
+
+  const isDemoMode = Boolean(token?.startsWith("demo_jwt_token_"));
+  const unlockedTabs = getUnlockedTabs();
 
   const menuGroups = [
     {
@@ -253,10 +255,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {visibleItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
-                  const token = useAuthStore.getState().token;
-                  const isDemoMode = token?.startsWith("demo_jwt_token_");
-                  const isUnlockedDemo = ["dashboard", "attendance", "leave", "payroll"].includes(item.id);
-                  const isLockedInDemo = isDemoMode && !isUnlockedDemo;
+                  const isUnlocked = unlockedTabs.includes("all") || unlockedTabs.includes(item.id);
+                  const isLockedInDemo = isDemoMode && !isUnlocked;
 
                   return (
                     <button

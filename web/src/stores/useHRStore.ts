@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { apiClient } from '../api/client';
 import { useAuthStore } from './useAuthStore';
 
-const API_BASE = 'http://localhost:5000/api/v1';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
 function getAuthHeaders() {
   const token = useAuthStore.getState().token;

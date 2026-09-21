@@ -29,8 +29,8 @@ test-report.json
 .DS_Store
 Thumbs.db
 
-#yarn
-.yarn.lock
-mobile/.yarn.lock
-web/.yarn.lock
+# Yarn lockfiles
+yarn.lock
+mobile/yarn.lock
+web/yarn.lock
 
