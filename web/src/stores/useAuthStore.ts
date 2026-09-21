@@ -1,7 +1,16 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:5000/api/v1';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+
+export const TABS_STARTER = Object.freeze(["dashboard", "attendance", "leave", "schedules", "announcements", "shifts"]);
+export const TABS_BUSINESS = Object.freeze([
+  "dashboard", "attendance", "leave", "payroll", "schedules",
+  "overtime", "reimbursements", "shifts", "shiftSwap", "kpi",
+  "documents", "employees", "assets", "announcements"
+]);
+export const TABS_ENTERPRISE = Object.freeze(["all"]);
+export const TABS_DEFAULT = Object.freeze(["dashboard", "attendance", "leave", "payroll"]);
 
 export interface AuthUser {
   id: number;
@@ -36,7 +45,7 @@ interface AuthState {
   subscription: SubscriptionPlan | null;
   setAuth: (token: string, user: AuthUser) => void;
   setSubscription: (subscription: SubscriptionPlan | null) => void;
-  getUnlockedTabs: () => string[];
+  getUnlockedTabs: () => readonly string[];
   loginAsDemo: (role?: 'admin' | 'employee' | 'manager', planId?: 'starter' | 'business' | 'enterprise') => void;
   logout: () => Promise<void>;
   refreshAuth: () => Promise<boolean>;
@@ -66,28 +75,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   getUnlockedTabs: () => {
     const sub = get().subscription;
     if (!sub) {
-      // Default demo mode without payment: only 4 basic tabs
-      return ["dashboard", "attendance", "leave", "payroll"];
+      return TABS_DEFAULT;
     }
 
     if (sub.planId === 'starter') {
-      return ["dashboard", "attendance", "leave", "schedules", "announcements", "shifts"];
+      return TABS_STARTER;
     }
 
     if (sub.planId === 'business') {
-      return [
-        "dashboard", "attendance", "leave", "payroll", "schedules",
-        "overtime", "reimbursements", "shifts", "shiftSwap", "kpi",
-        "documents", "employees", "assets", "announcements"
-      ];
+      return TABS_BUSINESS;
     }
 
     if (sub.planId === 'enterprise') {
-      // All modules unlocked!
-      return ["all"];
+      return TABS_ENTERPRISE;
     }
 
-    return ["dashboard", "attendance", "leave", "payroll"];
+    return TABS_DEFAULT;
   },
 
   loginAsDemo: (role: 'admin' | 'employee' | 'manager' = 'admin', planId?: 'starter' | 'business' | 'enterprise') => {

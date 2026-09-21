@@ -55,7 +55,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   if (!isOpen || !selectedPlan) return null;
 
-  const priceStr = billingCycle === "annual" ? selectedPlan.priceAnnual : selectedPlan.priceMonthly;
+  const priceStr =
+    billingCycle === "annual"
+      ? selectedPlan.priceAnnual
+      : selectedPlan.priceMonthly;
   const numPrice = parseInt(priceStr.replace(/[^0-9]/g, "")) || 499000;
   const adminFee = 4500;
   const ppn = Math.round(numPrice * 0.11);
@@ -66,7 +69,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     e.preventDefault();
 
     if (!buyerInfo.companyName || !buyerInfo.adminName || !buyerInfo.email) {
-      setErrorMessage("Silakan lengkapi Data Perusahaan, Nama Admin, dan Email terlebih dahulu.");
+      setErrorMessage(
+        "Silakan lengkapi Data Perusahaan, Nama Admin, dan Email terlebih dahulu.",
+      );
       return;
     }
 
@@ -75,7 +80,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setRedirectUrl("");
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+      const apiUrl =
+        import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
       const response = await fetch(`${apiUrl}/payments/create-snap`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -132,18 +138,24 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         window.open(data.redirectUrl, "_blank");
         setIsProcessing(false);
       } else {
-        throw new Error("Script Midtrans Snap JS belum termuat. Periksa koneksi internet.");
+        throw new Error(
+          "Script Midtrans Snap JS belum termuat. Periksa koneksi internet.",
+        );
       }
     } catch (err: any) {
       console.error("[Midtrans Error]:", err);
       setIsProcessing(false);
-      setErrorMessage(err.message || "Gagal menghubungkan ke Midtrans. Pastikan server backend berjalan.");
+      setErrorMessage(
+        err.message ||
+          "Gagal menghubungkan ke Midtrans. Pastikan server backend berjalan.",
+      );
     }
   };
 
   // Instant Bypass Handler for Sandbox Testing
   const handleInstantBypass = () => {
-    const fakeOrder = "SANDBOX-BYPASS-" + Math.floor(100000 + Math.random() * 900000);
+    const fakeOrder =
+      "SANDBOX-BYPASS-" + Math.floor(100000 + Math.random() * 900000);
     setTransactionRef(fakeOrder);
     setIsProcessing(false);
     setIsPendingMidtrans(false);
@@ -162,7 +174,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
       <div className="relative w-full max-w-2xl bg-white dark:bg-[#0f172a] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[92vh]">
-        
         {/* Header Ribbon */}
         <div className="p-6 md:p-7 bg-gradient-to-r from-blue-700 via-indigo-700 to-cyan-700 text-white relative">
           <button
@@ -172,15 +183,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           >
             <X className="w-5 h-5" />
           </button>
-          
+
           <div className="flex items-center gap-2 mb-1.5 text-blue-200 text-xs font-semibold tracking-wider uppercase">
-            <ShieldCheck className="w-4 h-4 text-cyan-300" /> Midtrans Official Payment Gateway
+            <ShieldCheck className="w-4 h-4 text-cyan-300" /> Midtrans Official
+            Payment Gateway
           </div>
           <h2 className="text-xl md:text-2xl font-bold tracking-tight">
             Checkout Lisensi {selectedPlan.name}
           </h2>
           <p className="text-blue-100/90 text-xs mt-1">
-            Paket {billingCycle === "annual" ? "Tahunan (Hemat 20%)" : "Bulanan"} • Kuota: {selectedPlan.maxEmployees}
+            Paket{" "}
+            {billingCycle === "annual" ? "Tahunan (Hemat 20%)" : "Bulanan"} •
+            Kuota: {selectedPlan.maxEmployees}
           </p>
         </div>
 
@@ -196,14 +210,23 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 Pembayaran Berhasil Diterima!
               </h3>
               <p className="text-slate-600 dark:text-slate-300 text-sm mt-2 max-w-md">
-                Selamat! Paket <span className="font-bold text-blue-600 dark:text-blue-400">{selectedPlan.name}</span> telah aktif untuk <span className="font-semibold text-slate-800 dark:text-slate-200">{buyerInfo.companyName || "Perusahaan Anda"}</span>. Seluruh fitur paket ini kini terbuka di dashboard.
+                Selamat! Paket{" "}
+                <span className="font-bold text-blue-600 dark:text-blue-400">
+                  {selectedPlan.name}
+                </span>{" "}
+                telah aktif untuk{" "}
+                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                  {buyerInfo.companyName || "Perusahaan Anda"}
+                </span>
+                . Seluruh fitur paket ini kini terbuka di dashboard.
               </p>
 
               {/* Receipt Summary Card */}
               <div className="my-6 p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-left w-full max-w-md space-y-3">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
                   <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Receipt className="w-4 h-4 text-blue-500" /> Order ID Midtrans
+                    <Receipt className="w-4 h-4 text-blue-500" /> Order ID
+                    Midtrans
                   </span>
                   <span className="font-mono text-xs font-bold text-slate-900 dark:text-white">
                     {transactionRef || "BHR-ORDER-COMPLETED"}
@@ -213,20 +236,28 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="space-y-1.5 text-xs">
                   <div className="flex justify-between text-slate-600 dark:text-slate-400">
                     <span>Paket Lisensi:</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">{selectedPlan.name} ({billingCycle})</span>
+                    <span className="font-semibold text-slate-900 dark:text-white">
+                      {selectedPlan.name} ({billingCycle})
+                    </span>
                   </div>
                   <div className="flex justify-between text-slate-600 dark:text-slate-400">
                     <span>Status Transaksi:</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400 uppercase">SETTLEMENT / PAID</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+                      SETTLEMENT / PAID
+                    </span>
                   </div>
                   <div className="flex justify-between text-slate-600 dark:text-slate-400">
                     <span>Waktu Pembayaran:</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">{new Date().toLocaleString("id-ID")}</span>
+                    <span className="font-semibold text-slate-900 dark:text-white">
+                      {new Date().toLocaleString("id-ID")}
+                    </span>
                   </div>
                 </div>
 
                 <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-sm font-bold">
-                  <span className="text-slate-700 dark:text-slate-300">Total Dibayar:</span>
+                  <span className="text-slate-700 dark:text-slate-300">
+                    Total Dibayar:
+                  </span>
                   <span className="text-emerald-600 dark:text-emerald-400">
                     Rp {totalPrice.toLocaleString("id-ID")}
                   </span>
@@ -238,7 +269,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   onClick={() => {
                     handleResetAndClose();
                     if (onPaymentSuccess) {
-                      onPaymentSuccess({ orderId: transactionRef, plan: selectedPlan.id });
+                      onPaymentSuccess({
+                        orderId: transactionRef,
+                        plan: selectedPlan.id,
+                      });
                     }
                   }}
                   className="flex-1 py-3.5 px-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition-all"
@@ -258,15 +292,23 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 Menunggu Pembayaran (Status: PENDING)
               </h3>
               <p className="text-slate-600 dark:text-slate-300 text-sm mt-2 max-w-md">
-                Transaksi QRIS / Virtual Account telah diterbitkan di <span className="font-semibold text-blue-600">Midtrans Sandbox</span> dengan ID: <span className="font-mono font-bold">{transactionRef}</span>.
+                Transaksi QRIS / Virtual Account telah diterbitkan di{" "}
+                <span className="font-semibold text-blue-600">
+                  Midtrans Sandbox
+                </span>{" "}
+                dengan ID:{" "}
+                <span className="font-mono font-bold">{transactionRef}</span>.
               </p>
 
               <div className="my-6 p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-left w-full max-w-md space-y-2">
                 <div className="text-xs font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-amber-500" /> Mode Sandbox Testing:
+                  <Sparkles className="w-4 h-4 text-amber-500" /> Mode Sandbox
+                  Testing:
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Di Sandbox, Anda tidak perlu transfer uang sungguhan. Anda bisa klik <b>"Bypass Bayar Sukses"</b> di bawah untuk langsung mengonfirmasi pembayaran dan membuka semua fitur dashboard.
+                  Di Sandbox, Anda tidak perlu transfer uang sungguhan. Anda
+                  bisa klik <b>"Bypass Bayar Sukses"</b> di bawah untuk langsung
+                  mengonfirmasi pembayaran dan membuka semua fitur dashboard.
                 </p>
               </div>
 
@@ -294,7 +336,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           ) : (
             /* 3. CHECKOUT FORM VIEW */
             <form onSubmit={handlePayWithMidtrans} className="space-y-6">
-              
               {errorMessage && (
                 <div className="p-3.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-xs flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -305,9 +346,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               {/* Form Data Pelanggan */}
               <div className="space-y-3">
                 <h3 className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <Building2 className="w-4 h-4" /> 1. Data Perusahaan & Kontak Pembeli
+                  <Building2 className="w-4 h-4" /> 1. Data Perusahaan & Kontak
+                  Pembeli
                 </h3>
-                
+
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     Nama Perusahaan *
@@ -317,7 +359,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     required
                     placeholder="Contoh: PT Solusi Digital Nusantara"
                     value={buyerInfo.companyName}
-                    onChange={(e) => setBuyerInfo({ ...buyerInfo, companyName: e.target.value })}
+                    onChange={(e) =>
+                      setBuyerInfo({
+                        ...buyerInfo,
+                        companyName: e.target.value,
+                      })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
@@ -332,7 +379,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       required
                       placeholder="Budi Santoso"
                       value={buyerInfo.adminName}
-                      onChange={(e) => setBuyerInfo({ ...buyerInfo, adminName: e.target.value })}
+                      onChange={(e) =>
+                        setBuyerInfo({
+                          ...buyerInfo,
+                          adminName: e.target.value,
+                        })
+                      }
                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none"
                     />
                   </div>
@@ -345,7 +397,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       required
                       placeholder="budi@perusahaan.co.id"
                       value={buyerInfo.email}
-                      onChange={(e) => setBuyerInfo({ ...buyerInfo, email: e.target.value })}
+                      onChange={(e) =>
+                        setBuyerInfo({ ...buyerInfo, email: e.target.value })
+                      }
                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none"
                     />
                   </div>
@@ -359,7 +413,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     type="tel"
                     placeholder="081234567890"
                     value={buyerInfo.phone}
-                    onChange={(e) => setBuyerInfo({ ...buyerInfo, phone: e.target.value })}
+                    onChange={(e) =>
+                      setBuyerInfo({ ...buyerInfo, phone: e.target.value })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
@@ -377,14 +433,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       Paket Lisensi {selectedPlan.name}
                     </span>
                     <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
-                      {billingCycle === "annual" ? "Tagihan Tahunan (Hemat 20%)" : "Tagihan Bulanan"}
+                      {billingCycle === "annual"
+                        ? "Tagihan Tahunan (Hemat 20%)"
+                        : "Tagihan Bulanan"}
                     </span>
                   </div>
 
                   <div className="space-y-1.5 text-xs">
                     <div className="flex justify-between text-slate-600 dark:text-slate-400">
                       <span>Harga Lisensi ({selectedPlan.maxEmployees}):</span>
-                      <span className="font-semibold text-slate-900 dark:text-white">Rp {numPrice.toLocaleString("id-ID")}</span>
+                      <span className="font-semibold text-slate-900 dark:text-white">
+                        Rp {numPrice.toLocaleString("id-ID")}
+                      </span>
                     </div>
                     <div className="flex justify-between text-slate-600 dark:text-slate-400">
                       <span>PPN (11%):</span>
@@ -397,7 +457,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </div>
 
                   <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Total Pembayaran:</span>
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      Total Pembayaran:
+                    </span>
                     <span className="text-lg font-extrabold text-blue-600 dark:text-blue-400">
                       Rp {totalPrice.toLocaleString("id-ID")}
                     </span>
@@ -408,10 +470,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               {/* Supported Payment Channels via Midtrans */}
               <div className="p-3.5 rounded-2xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40 text-xs">
                 <div className="font-semibold text-blue-800 dark:text-blue-300 mb-1 flex items-center gap-1.5">
-                  <CreditCard className="w-4 h-4 text-blue-600" /> Kanal Pembayaran Midtrans Snap:
+                  <CreditCard className="w-4 h-4 text-blue-600" /> Kanal
+                  Pembayaran Midtrans Snap:
                 </div>
                 <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Mendukung QRIS (GoPay, OVO, ShopeePay, DANA), Virtual Account (BCA, Mandiri, BRI, BNI, Permata), Kartu Kredit/Debit Visa & Mastercard, serta Alfamart & Indomaret.
+                  Mendukung QRIS (GoPay, OVO, ShopeePay, DANA), Virtual Account
+                  (BCA, Mandiri, BRI, BNI, Permata), Kartu Kredit/Debit Visa &
+                  Mastercard, serta Alfamart & Indomaret.
                 </p>
               </div>
 
@@ -430,7 +495,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     title="Bypass langsung tanpa perlu scan QRIS untuk testing"
                   >
                     <Zap className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>⚡ Bypass Sandbox</span>
+                    <span>Bypass Sandbox</span>
                   </button>
 
                   <button
@@ -445,18 +510,19 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       </span>
                     ) : (
                       <>
-                        <span>Bayar via Midtrans (Rp {totalPrice.toLocaleString("id-ID")})</span>
+                        <span>
+                          Bayar via Midtrans (Rp{" "}
+                          {totalPrice.toLocaleString("id-ID")})
+                        </span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
                   </button>
                 </div>
               </div>
-
             </form>
           )}
         </div>
-
       </div>
     </div>
   );

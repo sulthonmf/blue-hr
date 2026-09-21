@@ -37,7 +37,7 @@ import { RequestDemoModal } from "./components/landing/RequestDemoModal";
 import { ArrowLeft, Sparkles, LogOut } from "lucide-react";
 
 export const App: React.FC = () => {
-  const { token, user, loginAsDemo, logout } = useAuthStore();
+  const { token, user, subscription, loginAsDemo, logout, getUnlockedTabs } = useAuthStore();
   const { fetchData } = useHRStore();
   const { theme } = useThemeStore();
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -48,6 +48,8 @@ export const App: React.FC = () => {
     if (token) {
       fetchData();
       setViewMode("app");
+    } else {
+      setViewMode((prev) => (prev === "login" ? "login" : "landing"));
     }
   }, [token, fetchData]);
 
@@ -62,8 +64,30 @@ export const App: React.FC = () => {
     }
   }, [theme]);
 
-  // Handle Landing Page View Mode
-  if (viewMode === "landing" && !token) {
+  // Derived state (evaluated unconditionally)
+  const isDemoMode = Boolean(token?.startsWith("demo_jwt_token_"));
+  const unlockedTabs = getUnlockedTabs();
+
+  // Handle Unauthenticated / Landing / Login View Modes
+  if (!token) {
+    if (viewMode === "login") {
+      return (
+        <div className="relative">
+          {/* Back to Landing Page Floating Button */}
+          <div className="fixed top-4 left-4 z-50">
+            <button
+              onClick={() => setViewMode("landing")}
+              className="px-4 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 text-xs font-semibold border border-slate-700 shadow-xl backdrop-blur-md flex items-center gap-2 transition-all"
+            >
+              <ArrowLeft className="w-4 h-4 text-cyan-400" />
+              <span>Kembali ke Landing Page</span>
+            </button>
+          </div>
+          <LoginPage />
+        </div>
+      );
+    }
+
     return (
       <LandingPage
         onGoToLogin={() => setViewMode("login")}
@@ -72,28 +96,15 @@ export const App: React.FC = () => {
     );
   }
 
-  // Handle Staff Login View Mode
-  if (!token || viewMode === "login") {
+  // Handle case where user is logged in but navigates to landing page preview
+  if (viewMode === "landing") {
     return (
-      <div className="relative">
-        {/* Back to Landing Page Floating Button */}
-        <div className="fixed top-4 left-4 z-50">
-          <button
-            onClick={() => setViewMode("landing")}
-            className="px-4 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 text-xs font-semibold border border-slate-700 shadow-xl backdrop-blur-md flex items-center gap-2 transition-all"
-          >
-            <ArrowLeft className="w-4 h-4 text-cyan-400" />
-            <span>Kembali ke Landing Page</span>
-          </button>
-        </div>
-        <LoginPage />
-      </div>
+      <LandingPage
+        onGoToLogin={() => setViewMode("login")}
+        onGoToDashboard={() => setViewMode("app")}
+      />
     );
   }
-
-  const isDemoMode = token?.startsWith("demo_jwt_token_");
-  const subscription = useAuthStore((s) => s.subscription);
-  const unlockedTabs = useAuthStore((s) => s.getUnlockedTabs());
 
   const getModuleName = (tab: string) => {
     const map: Record<string, string> = {

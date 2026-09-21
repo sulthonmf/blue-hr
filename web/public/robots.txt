@@ -1,0 +1,10 @@
+# robots.txt for BlueHR Enterprise
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*?token=*
+
+# Canonical Host and Sitemap
+Host: https://blue-hr.vercel.app
+Sitemap: https://blue-hr.vercel.app/sitemap.xml
