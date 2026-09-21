@@ -270,10 +270,14 @@ export const LeaveService = {
 };
 
 import { EmailService } from './EmailService';
+import { MidtransService } from './MidtransService';
+import { OrderRepository } from '../repositories';
 
 // Re-export repositories & services for direct use in routes
 export {
   EmailService,
+  MidtransService,
+  OrderRepository,
   UserRepository,
   BranchRepository,
   RoleRepository,

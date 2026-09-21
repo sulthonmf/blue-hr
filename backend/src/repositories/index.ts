@@ -562,3 +562,75 @@ export const OrgChartRepository = {
     });
   })
 };
+
+export interface OrderRecord {
+  id?: number;
+  order_id: string;
+  plan_id: string;
+  plan_name: string;
+  billing_cycle: string;
+  amount: number;
+  admin_fee?: number;
+  tax?: number;
+  total_amount: number;
+  company_name: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone?: string;
+  payment_method?: string;
+  payment_status?: string;
+  snap_token?: string;
+  snap_redirect_url?: string;
+  transaction_time?: string;
+  settlement_time?: string;
+  raw_response?: string;
+  created_at?: string;
+}
+
+export const OrderRepository = {
+  create: (data: OrderRecord): Promise<number> => new Promise((res, rej) => {
+    const {
+      order_id, plan_id, plan_name, billing_cycle, amount, admin_fee = 0, tax = 0,
+      total_amount, company_name, customer_name, customer_email, customer_phone = '',
+      payment_method = 'midtrans', payment_status = 'PENDING', snap_token = '', snap_redirect_url = ''
+    } = data;
+    db.run(
+      `INSERT INTO orders (
+        order_id, plan_id, plan_name, billing_cycle, amount, admin_fee, tax,
+        total_amount, company_name, customer_name, customer_email, customer_phone,
+        payment_method, payment_status, snap_token, snap_redirect_url
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        order_id, plan_id, plan_name, billing_cycle, amount, admin_fee, tax,
+        total_amount, company_name, customer_name, customer_email, customer_phone,
+        payment_method, payment_status, snap_token, snap_redirect_url
+      ],
+      function(err) { if (err) rej(err); else res(this.lastID); }
+    );
+  }),
+
+  findByOrderId: (orderId: string): Promise<OrderRecord | undefined> => new Promise((res, rej) => {
+    db.get(`SELECT * FROM orders WHERE order_id = ?`, [orderId], (err, row) => {
+      if (err) rej(err); else res(row as OrderRecord);
+    });
+  }),
+
+  updateStatus: (orderId: string, status: string, paymentMethod?: string, settlementTime?: string, rawResponse?: string): Promise<boolean> => new Promise((res, rej) => {
+    db.run(
+      `UPDATE orders SET 
+        payment_status = ?,
+        payment_method = COALESCE(?, payment_method),
+        settlement_time = COALESCE(?, settlement_time),
+        raw_response = COALESCE(?, raw_response)
+      WHERE order_id = ?`,
+      [status, paymentMethod || null, settlementTime || null, rawResponse || null, orderId],
+      (err) => { if (err) rej(err); else res(true); }
+    );
+  }),
+
+  findAll: (): Promise<OrderRecord[]> => new Promise((res, rej) => {
+    db.all(`SELECT * FROM orders ORDER BY created_at DESC LIMIT 50`, [], (err, rows) => {
+      if (err) rej(err); else res(rows as OrderRecord[]);
+    });
+  })
+};

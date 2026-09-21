@@ -389,6 +389,33 @@ export function initDatabase(): Promise<void> {
         )
       `);
 
+      // Orders & Subscriptions table for Payment Gateways (Midtrans/Xendit)
+      db.run(`
+        CREATE TABLE IF NOT EXISTS orders (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          order_id TEXT UNIQUE NOT NULL,
+          plan_id TEXT NOT NULL,
+          plan_name TEXT NOT NULL,
+          billing_cycle TEXT NOT NULL,
+          amount INTEGER NOT NULL,
+          admin_fee INTEGER DEFAULT 0,
+          tax INTEGER DEFAULT 0,
+          total_amount INTEGER NOT NULL,
+          company_name TEXT NOT NULL,
+          customer_name TEXT NOT NULL,
+          customer_email TEXT NOT NULL,
+          customer_phone TEXT,
+          payment_method TEXT,
+          payment_status TEXT DEFAULT 'PENDING',
+          snap_token TEXT,
+          snap_redirect_url TEXT,
+          transaction_time DATETIME,
+          settlement_time DATETIME,
+          raw_response TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
       // Seed Initial Roles if empty
       db.get(`SELECT COUNT(*) as count FROM roles`, [], (err, row: any) => {
         if (!err && row && row.count === 0) {

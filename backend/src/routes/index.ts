@@ -6,6 +6,8 @@ import {
   AttendanceService,
   LeaveService,
   EmailService,
+  MidtransService,
+  OrderRepository,
   UserRepository,
   BranchRepository,
   RoleRepository,
@@ -161,6 +163,84 @@ router.post('/public/demo-request', async (req: Request, res: Response) => {
   } catch (err: any) {
     console.error('[DemoRequest] Error sending email:', err);
     res.status(500).json({ error: err.message || 'Gagal mengirim email permohonan demo' });
+  }
+});
+
+// MIDTRANS PAYMENT GATEWAY ROUTES
+router.get('/payments/client-key', (req: Request, res: Response) => {
+  res.json({
+    clientKey: process.env.MIDTRANS_CLIENT_KEY || '',
+    isProduction: process.env.MIDTRANS_IS_PRODUCTION === 'true',
+  });
+});
+
+router.post('/payments/create-snap', async (req: Request, res: Response) => {
+  try {
+    const {
+      planId,
+      planName,
+      billingCycle,
+      amount,
+      companyName,
+      customerName,
+      customerEmail,
+      customerPhone,
+    } = req.body;
+
+    if (!planId || !amount || !companyName || !customerName || !customerEmail) {
+      return res.status(400).json({ error: 'Mohon lengkapi data pemesanan (Nama Perusahaan, Admin, Email, Paket)' });
+    }
+
+    const transaction = await MidtransService.createSnapTransaction({
+      planId,
+      planName: planName || 'BlueHR Subscription',
+      billingCycle: billingCycle || 'monthly',
+      amount: Number(amount),
+      companyName,
+      customerName,
+      customerEmail,
+      customerPhone,
+    });
+
+    res.json({
+      success: true,
+      ...transaction,
+    });
+  } catch (err: any) {
+    console.error('[Midtrans Create Snap Error]:', err);
+    res.status(500).json({ error: err.message || 'Gagal memproses transaksi Midtrans' });
+  }
+});
+
+router.post('/payments/webhook', async (req: Request, res: Response) => {
+  try {
+    console.log('[Midtrans Webhook Received]:', req.body);
+    const result = await MidtransService.handleWebhook(req.body);
+    res.json({ success: true, result });
+  } catch (err: any) {
+    console.error('[Midtrans Webhook Error]:', err);
+    res.status(500).json({ error: err.message || 'Gagal memproses webhook Midtrans' });
+  }
+});
+
+router.get('/payments/status/:orderId', async (req: Request, res: Response) => {
+  try {
+    const order = await OrderRepository.findByOrderId(req.params.orderId);
+    if (!order) {
+      return res.status(404).json({ error: 'Order tidak ditemukan' });
+    }
+    res.json({ success: true, order });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/payments/orders', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const orders = await OrderRepository.findAll();
+    res.json(orders);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
   }
 });
 
