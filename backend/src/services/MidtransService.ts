@@ -3,9 +3,21 @@ import { OrderRepository } from '../repositories';
 
 export class MidtransService {
   private static getSnapClient() {
-    const serverKey = process.env.MIDTRANS_SERVER_KEY || '';
-    const clientKey = process.env.MIDTRANS_CLIENT_KEY || '';
-    const isProduction = process.env.MIDTRANS_IS_PRODUCTION === 'true';
+    let serverKey = (process.env.MIDTRANS_SERVER_KEY || '').trim().replace(/^['"]|['"]$/g, '');
+    let clientKey = (process.env.MIDTRANS_CLIENT_KEY || '').trim().replace(/^['"]|['"]$/g, '');
+
+    // Auto-detect environment based on Key prefix to prevent 401 Unauthorized:
+    // Midtrans Sandbox keys ALWAYS start with 'SB-' (e.g. SB-Mid-server-..., SB-Mid-client-...)
+    // Midtrans Production keys NEVER start with 'SB-' (e.g. Mid-server-..., Mid-client-...)
+    let isProduction = process.env.MIDTRANS_IS_PRODUCTION === 'true';
+
+    if (serverKey.startsWith('SB-') || clientKey.startsWith('SB-')) {
+      isProduction = false;
+      console.log('[MidtransService] Detected Sandbox Key prefix (SB-). Running in SANDBOX mode.');
+    } else if (serverKey.startsWith('Mid-') || clientKey.startsWith('Mid-')) {
+      isProduction = true;
+      console.log('[MidtransService] Detected Production Key prefix (Mid-). Running in PRODUCTION mode.');
+    }
 
     return new (midtransClient as any).Snap({
       isProduction,
