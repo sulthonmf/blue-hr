@@ -32,7 +32,9 @@ import { HelpdeskPage } from "./pages/Helpdesk";
 import { DocumentsPage } from "./pages/Documents";
 import { ShiftSwapPage } from "./pages/ShiftSwap";
 import { FieldVisitsPage } from "./pages/FieldVisits";
-import { ArrowLeft, Sparkles, UserCheck, LogOut } from "lucide-react";
+import { DemoBlurOverlay } from "./components/ui/DemoBlurOverlay";
+import { RequestDemoModal } from "./components/landing/RequestDemoModal";
+import { ArrowLeft, Sparkles, LogOut } from "lucide-react";
 
 export const App: React.FC = () => {
   const { token, user, loginAsDemo, logout } = useAuthStore();
@@ -40,6 +42,7 @@ export const App: React.FC = () => {
   const { theme } = useThemeStore();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [viewMode, setViewMode] = useState<"landing" | "login" | "app">(token ? "app" : "landing");
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -88,7 +91,36 @@ export const App: React.FC = () => {
     );
   }
 
-  const renderTabContent = () => {
+  const isDemoMode = token?.startsWith("demo_jwt_token_");
+  const DEMO_UNLOCKED_TABS = ["dashboard", "attendance", "leave", "payroll"];
+
+  const getModuleName = (tab: string) => {
+    const map: Record<string, string> = {
+      employees: "Manajemen Pegawai & RBAC Hak Akses",
+      orgChart: "Struktur Organisasi Korporat 4-Tingkat",
+      documents: "Repositori Dokumen Resmi & Sertifikat",
+      helpdesk: "Helpdesk Ticket & HR Service Desk",
+      branches: "Manajemen Cabang & Radius Geofence Khusus",
+      recruitment: "Portal Perekrutan ATS & Pipeline Pelamar",
+      offboarding: "Offboarding, Clearance & Surat Peringatan (SP)",
+      trainings: "Pelatihan Karyawan & Sertifikasi Internal",
+      kpi: "Evaluasi Target KPI & Performance Review",
+      overtime: "Pengajuan Lembur (SPL) & Kompensasi",
+      reimbursements: "Klaim Reimbursement Operasional",
+      fieldVisits: "Pelacakan Kunjungan Lapangan & Field Visit",
+      shifts: "Pengaturan Pola Shift Kerja",
+      shiftSwap: "Fasilitas Penukaran Shift Karyawan",
+      schedules: "Agenda Ruang Rapat & Booking",
+      assets: "Inventaris Aset Perusahaan",
+      announcements: "Diseminasi Pengumuman Real-Time",
+      roles: "Pengaturan Peran & Fine-Grained Permissions",
+      auditLogs: "Audit Log Trail & Keamanan",
+      settings: "Pengaturan Global Perusahaan",
+    };
+    return map[tab] || "Modul Enterprise BlueHR";
+  };
+
+  const getRawTabContent = () => {
     switch (activeTab) {
       case "dashboard":
         return <DashboardPage onNavigate={setActiveTab} />;
@@ -143,7 +175,21 @@ export const App: React.FC = () => {
     }
   };
 
-  const isDemoMode = token?.startsWith("demo_jwt_token_");
+  const renderTabContent = () => {
+    const content = getRawTabContent();
+    if (isDemoMode && !DEMO_UNLOCKED_TABS.includes(activeTab)) {
+      return (
+        <DemoBlurOverlay
+          moduleName={getModuleName(activeTab)}
+          onRequestDemo={() => setIsDemoModalOpen(true)}
+          onNavigateUnlocked={setActiveTab}
+        >
+          {content}
+        </DemoBlurOverlay>
+      );
+    }
+    return content;
+  };
 
   return (
     <div
@@ -213,6 +259,13 @@ export const App: React.FC = () => {
           </main>
         </div>
       </div>
+
+      {/* Request Demo Modal for Locked Teaser Module */}
+      <RequestDemoModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
+        onLaunchDemo={() => setActiveTab("dashboard")}
+      />
     </div>
   );
 };

@@ -25,6 +25,7 @@ import {
   FileText,
   ArrowLeftRight,
   MapPin,
+  Lock,
 } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useLanguageStore } from "../../stores/useLanguageStore";
@@ -252,6 +253,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {visibleItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
+                  const token = useAuthStore.getState().token;
+                  const isDemoMode = token?.startsWith("demo_jwt_token_");
+                  const isUnlockedDemo = ["dashboard", "attendance", "leave", "payroll"].includes(item.id);
+                  const isLockedInDemo = isDemoMode && !isUnlockedDemo;
+
                   return (
                     <button
                       key={item.id}
@@ -270,8 +276,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         className={`shrink-0 ${isActive ? "text-white" : "text-slate-400"}`}
                       />
                       {!isCollapsed && (
-                        <span className="text-left leading-tight flex-1">
-                          {item.label}
+                        <span className="text-left leading-tight flex-1 flex items-center justify-between gap-1">
+                          <span>{item.label}</span>
+                          {isLockedInDemo && (
+                            <Lock size={13} className="text-slate-400 dark:text-slate-500 opacity-60 shrink-0" />
+                          )}
                         </span>
                       )}
                     </button>
