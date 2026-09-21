@@ -28,3 +28,9 @@ test-report.json
 # OS files
 .DS_Store
 Thumbs.db
+
+#yarn
+.yarn.lock
+mobile/.yarn.lock
+web/.yarn.lock
+
