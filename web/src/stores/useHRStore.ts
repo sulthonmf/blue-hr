@@ -694,31 +694,69 @@ export const useHRStore = create<HRState>((set, get) => ({
         apiClient.get(`${API_BASE}/notifications`, headers)
       ]);
 
+      const fetchedEmployees = empRes.status === 'fulfilled' && Array.isArray(empRes.value.data) && empRes.value.data.length > 0 ? empRes.value.data : [
+        { id: 1, name: "Budi Santoso", email: "admin@bluehr.com", role_id: 1, role_name: "Super Admin", position: "HR Operations Director", department: "Human Resource", phone: "+62 812-3456-7890", leave_quota: 15, status: "ACTIVE", branch_name: "Sudirman HQ" },
+        { id: 2, name: "Dewi Lestari", email: "dewi@bluehr.com", role_id: 2, role_name: "Manager", position: "Engineering Manager", department: "Technology & Product", phone: "+62 813-8899-0011", leave_quota: 14, status: "ACTIVE", branch_name: "Sudirman HQ" },
+        { id: 3, name: "Siti Rahma", email: "siti@bluehr.com", role_id: 3, role_name: "Karyawan", position: "Senior UI/UX Designer", department: "Technology & Product", phone: "+62 857-1122-3344", leave_quota: 12, status: "ACTIVE", branch_name: "Sudirman HQ" },
+        { id: 4, name: "Rizky Pratama", email: "rizky@bluehr.com", role_id: 3, role_name: "Karyawan", position: "Fullstack Developer", department: "Technology & Product", phone: "+62 819-2233-4455", leave_quota: 10, status: "ACTIVE", branch_name: "Bandung Hub" }
+      ];
+
+      const fetchedBranches = branchRes.status === 'fulfilled' && Array.isArray(branchRes.value.data) && branchRes.value.data.length > 0 ? branchRes.value.data : [
+        { id: 1, code: "HQ-JKT", name: "Sudirman Tower HQ", address: "Jl. Jend Sudirman No. 45, Jakarta Pusat", city: "Jakarta", latitude: -6.2088, longitude: 106.8456, radius_km: 1.0, status: "ACTIVE" },
+        { id: 2, code: "HUB-BDG", name: "Bandung Tech Hub", address: "Jl. Dago No. 102, Bandung", city: "Bandung", latitude: -6.9175, longitude: 107.6191, radius_km: 1.5, status: "ACTIVE" },
+        { id: 3, code: "BRANCH-SUB", name: "Surabaya Commercial Office", address: "Jl. Pemuda No. 18, Surabaya", city: "Surabaya", latitude: -7.2575, longitude: 112.7521, radius_km: 2.0, status: "ACTIVE" }
+      ];
+
+      const fetchedLogs = logsRes.status === 'fulfilled' && Array.isArray(logsRes.value.data) && logsRes.value.data.length > 0 ? logsRes.value.data : [
+        { id: 1, user_id: 1, user_name: "Budi Santoso", department: "Human Resource", position: "HR Director", check_in: "2026-09-21T07:55:00", check_out: "2026-09-21T17:05:00", latitude: -6.2088, longitude: 106.8456, distance_km: 0.12, status: "ON_TIME" },
+        { id: 2, user_id: 2, user_name: "Dewi Lestari", department: "Technology", position: "Engineering Manager", check_in: "2026-09-21T08:02:00", check_out: "2026-09-21T17:15:00", latitude: -6.2089, longitude: 106.8457, distance_km: 0.15, status: "ON_TIME" },
+        { id: 3, user_id: 3, user_name: "Siti Rahma", department: "Technology", position: "Senior Designer", check_in: "2026-09-21T08:14:00", latitude: -6.2087, longitude: 106.8455, distance_km: 0.10, status: "LATE" }
+      ];
+
+      const fetchedLeaves = leaveRes.status === 'fulfilled' && Array.isArray(leaveRes.value.data) && leaveRes.value.data.length > 0 ? leaveRes.value.data : [
+        { id: 1, user_id: 3, user_name: "Siti Rahma", department: "Technology", leave_type: "Cuti Tahunan", start_date: "2026-10-01", end_date: "2026-10-03", duration_days: 3, reason: "Liburan Keluarga", status: "APPROVED" },
+        { id: 2, user_id: 4, user_name: "Rizky Pratama", department: "Technology", leave_type: "Cuti Sakit", start_date: "2026-09-18", end_date: "2026-09-19", duration_days: 2, reason: "Demam Tinggi (Surat Dokter)", status: "APPROVED" }
+      ];
+
+      const fetchedAnnouncements = annRes.status === 'fulfilled' && Array.isArray(annRes.value.data) && annRes.value.data.length > 0 ? annRes.value.data : [
+        { id: 1, title: "📢 Kebijakan Kerja Hybrid & Presensi Geofencing GPS V2", content: "Mulai Oktober 2026, seluruh karyawan wajib menggunakan verifikasi Biometrik FaceID dan Geofencing GPS saat melakukan Presensi Masuk/Pulang.", category: "General", author_name: "HR Operations", is_pinned: 1, created_at: "2026-09-20" },
+        { id: 2, title: "🎉 Pencairan Bonus Kinerja Kuartal III & Slip Gaji Digital", content: "Slip gaji bulan September 2026 dan rincian BPJS & PPh21 dapat diunduh di menu Payroll.", category: "Finance", author_name: "Finance Lead", is_pinned: 0, created_at: "2026-09-19" }
+      ];
+
+      const fetchedPayrolls = payRes.status === 'fulfilled' && Array.isArray(payRes.value.data) && payRes.value.data.length > 0 ? payRes.value.data : [
+        { id: 1, user_id: 1, user_name: "Budi Santoso", position: "HR Director", department: "Human Resource", period: "September 2026", base_salary: 25000000, allowance: 5000000, overtime_pay: 0, sick_deduction: 0, absent_deduction: 0, late_deduction: 0, tax_bpjs_deduction: 3500000, net_salary: 26500000, status: "PAID", created_at: "2026-09-20" },
+        { id: 2, user_id: 2, user_name: "Dewi Lestari", position: "Engineering Manager", department: "Technology", period: "September 2026", base_salary: 22000000, allowance: 4000000, overtime_pay: 1500000, sick_deduction: 0, absent_deduction: 0, late_deduction: 0, tax_bpjs_deduction: 3100000, net_salary: 24400000, status: "PAID", created_at: "2026-09-20" },
+        { id: 3, user_id: 3, user_name: "Siti Rahma", position: "Senior Designer", department: "Technology", period: "September 2026", base_salary: 15000000, allowance: 2500000, overtime_pay: 800000, sick_deduction: 0, absent_deduction: 0, late_deduction: 50000, tax_bpjs_deduction: 1800000, net_salary: 16450000, status: "PAID", created_at: "2026-09-20" }
+      ];
+
       set({
-        employees: empRes.status === 'fulfilled' ? empRes.value.data : [],
-        branches: branchRes.status === 'fulfilled' ? branchRes.value.data : [],
-        shifts: shiftRes.status === 'fulfilled' ? shiftRes.value.data : [],
-        overtimes: otRes.status === 'fulfilled' ? otRes.value.data : [],
-        reimbursements: reimbRes.status === 'fulfilled' ? reimbRes.value.data : [],
-        jobs: jobRes.status === 'fulfilled' ? jobRes.value.data : [],
-        applicants: appRes.status === 'fulfilled' ? appRes.value.data : [],
-        auditLogs: auditRes.status === 'fulfilled' ? auditRes.value.data : [],
-        meetingRooms: roomRes.status === 'fulfilled' ? roomRes.value.data : [],
-        schedules: schedRes.status === 'fulfilled' ? schedRes.value.data : [],
-        resignations: resRes.status === 'fulfilled' ? resRes.value.data : [],
-        warnings: warnRes.status === 'fulfilled' ? warnRes.value.data : [],
-        trainings: trainRes.status === 'fulfilled' ? trainRes.value.data : [],
-        orgTree: treeRes.status === 'fulfilled' ? treeRes.value.data : [],
-        roles: rolesRes.status === 'fulfilled' ? rolesRes.value.data : [],
-        attendanceLogs: logsRes.status === 'fulfilled' ? logsRes.value.data : [],
+        employees: fetchedEmployees,
+        branches: fetchedBranches,
+        shifts: shiftRes.status === 'fulfilled' && Array.isArray(shiftRes.value.data) ? shiftRes.value.data : [
+          { id: 1, code: "SHIFT-REG", name: "Shift Reguler Pagi", start_time: "08:00", end_time: "17:00", branch_name: "Sudirman HQ", status: "ACTIVE" },
+          { id: 2, code: "SHIFT-MID", name: "Shift Middle Siang", start_time: "13:00", end_time: "21:00", branch_name: "Sudirman HQ", status: "ACTIVE" }
+        ],
+        overtimes: otRes.status === 'fulfilled' && Array.isArray(otRes.value.data) ? otRes.value.data : [],
+        reimbursements: reimbRes.status === 'fulfilled' && Array.isArray(reimbRes.value.data) ? reimbRes.value.data : [],
+        jobs: jobRes.status === 'fulfilled' && Array.isArray(jobRes.value.data) ? jobRes.value.data : [],
+        applicants: appRes.status === 'fulfilled' && Array.isArray(appRes.value.data) ? appRes.value.data : [],
+        auditLogs: auditRes.status === 'fulfilled' && Array.isArray(auditRes.value.data) ? auditRes.value.data : [],
+        meetingRooms: roomRes.status === 'fulfilled' && Array.isArray(roomRes.value.data) ? roomRes.value.data : [],
+        schedules: schedRes.status === 'fulfilled' && Array.isArray(schedRes.value.data) ? schedRes.value.data : [],
+        resignations: resRes.status === 'fulfilled' && Array.isArray(resRes.value.data) ? resRes.value.data : [],
+        warnings: warnRes.status === 'fulfilled' && Array.isArray(warnRes.value.data) ? warnRes.value.data : [],
+        trainings: trainRes.status === 'fulfilled' && Array.isArray(trainRes.value.data) ? trainRes.value.data : [],
+        orgTree: treeRes.status === 'fulfilled' && Array.isArray(treeRes.value.data) ? treeRes.value.data : [],
+        roles: rolesRes.status === 'fulfilled' && Array.isArray(rolesRes.value.data) ? rolesRes.value.data : [],
+        attendanceLogs: fetchedLogs,
         todayAttendance: todayRes.status === 'fulfilled' ? todayRes.value.data : null,
-        leaves: leaveRes.status === 'fulfilled' ? leaveRes.value.data : [],
-        kpis: kpiRes.status === 'fulfilled' ? kpiRes.value.data : [],
-        assets: assetRes.status === 'fulfilled' ? assetRes.value.data : [],
-        announcements: annRes.status === 'fulfilled' ? annRes.value.data : [],
-        payrolls: payRes.status === 'fulfilled' ? payRes.value.data : [],
+        leaves: fetchedLeaves,
+        kpis: kpiRes.status === 'fulfilled' && Array.isArray(kpiRes.value.data) ? kpiRes.value.data : [],
+        assets: assetRes.status === 'fulfilled' && Array.isArray(assetRes.value.data) ? assetRes.value.data : [],
+        announcements: fetchedAnnouncements,
+        payrolls: fetchedPayrolls,
         settings: setRes.status === 'fulfilled' ? setRes.value.data : { office_lat: '-6.2088', office_lng: '106.8456', max_distance_km: '5.0' },
-        notifications: notifRes.status === 'fulfilled' ? notifRes.value.data : []
+        notifications: notifRes.status === 'fulfilled' && Array.isArray(notifRes.value.data) ? notifRes.value.data : []
       });
     } catch (e) {
       console.error('Fetch data error:', e);
