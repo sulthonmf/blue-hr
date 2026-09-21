@@ -5,6 +5,7 @@ import {
   AuthService,
   AttendanceService,
   LeaveService,
+  EmailService,
   UserRepository,
   BranchRepository,
   RoleRepository,
@@ -131,6 +132,36 @@ router.post('/auth/logout', (req: Request, res: Response) => {
     sameSite: 'lax'
   });
   res.json({ message: 'Logged out successfully' });
+});
+
+// PUBLIC DEMO REQUEST EMAIL ENDPOINT
+router.post('/public/demo-request', async (req: Request, res: Response) => {
+  try {
+    const { fullName, email, phone, companyName, employeeCount, preferredDate, notes, refCode } = req.body;
+    if (!fullName || !email || !phone || !companyName) {
+      return res.status(400).json({ error: 'Mohon lengkapi field wajib (Nama, Email, Telp, Perusahaan)' });
+    }
+
+    const result = await EmailService.sendDemoRequestNotification({
+      fullName,
+      email,
+      phone,
+      companyName,
+      employeeCount: employeeCount || '51-200',
+      preferredDate,
+      notes,
+      refCode: refCode || ('DEMO-HR-' + Math.floor(100000 + Math.random() * 900000)),
+    });
+
+    res.json({
+      success: true,
+      message: 'Permohonan demo berhasil dikirim',
+      details: result,
+    });
+  } catch (err: any) {
+    console.error('[DemoRequest] Error sending email:', err);
+    res.status(500).json({ error: err.message || 'Gagal mengirim email permohonan demo' });
+  }
 });
 
 router.get('/auth/me', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {

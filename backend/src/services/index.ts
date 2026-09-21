@@ -269,8 +269,11 @@ export const LeaveService = {
   }
 };
 
-// Re-export repositories for direct use in routes
+import { EmailService } from './EmailService';
+
+// Re-export repositories & services for direct use in routes
 export {
+  EmailService,
   UserRepository,
   BranchRepository,
   RoleRepository,

@@ -16,6 +16,7 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 import { RequestDemoModal } from "../components/landing/RequestDemoModal";
+import { CheckoutModal, PlanItem } from "../components/landing/CheckoutModal";
 import { MobilePhoneSimulator } from "../components/landing/MobilePhoneSimulator";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useThemeStore } from "../stores/useThemeStore";
@@ -30,6 +31,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onGoToDashboard,
 }) => {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const [selectedPlanForCheckout, setSelectedPlanForCheckout] = useState<PlanItem | null>(null);
   const [activeTab, setActiveTab] = useState<"geofence" | "payroll" | "mobile">("geofence");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
 
@@ -591,7 +594,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             <button
-              onClick={() => setIsDemoModalOpen(true)}
+              onClick={() => {
+                setSelectedPlanForCheckout({
+                  id: "starter",
+                  name: "Starter Plan",
+                  priceMonthly: "Rp 499.000",
+                  priceAnnual: "Rp 399.000",
+                  maxEmployees: "Hingga 50 Karyawan Aktif",
+                  features: ["Presensi Geofencing GPS", "Mobile App (Android & iOS)", "Pengajuan Cuti Standard"],
+                });
+                setIsCheckoutModalOpen(true);
+              }}
               className={isDark ? "mt-6 w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-all" : "mt-6 w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition-all"}
             >
               Pilih Paket Starter
@@ -628,10 +641,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             <button
-              onClick={() => setIsDemoModalOpen(true)}
+              onClick={() => {
+                setSelectedPlanForCheckout({
+                  id: "business",
+                  name: "Growth Business Plan",
+                  priceMonthly: "Rp 1.499.000",
+                  priceAnnual: "Rp 1.199.000",
+                  maxEmployees: "Hingga 200 Karyawan Aktif",
+                  features: [
+                    "Semuanya di Paket Starter",
+                    "Biometrik FaceID & Root Detection",
+                    "Approval Cuti Multi-Level (2 Level)",
+                    "Kalkulasi Payroll BPJS & PPh21",
+                  ],
+                });
+                setIsCheckoutModalOpen(true);
+              }}
               className="mt-6 w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/30 transition-all"
             >
-              Mulai Uji Coba Gratis
+              Mulai Uji Coba & Pembayaran
             </button>
           </div>
 
@@ -681,6 +709,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         isOpen={isDemoModalOpen}
         onClose={() => setIsDemoModalOpen(false)}
         onLaunchDemo={() => handleQuickDemo("admin")}
+      />
+
+      {/* Mock Payment Gateway Checkout Modal */}
+      <CheckoutModal
+        isOpen={isCheckoutModalOpen}
+        onClose={() => setIsCheckoutModalOpen(false)}
+        selectedPlan={selectedPlanForCheckout}
+        billingCycle={billingCycle}
+        onPaymentSuccess={() => {
+          handleQuickDemo("admin");
+        }}
       />
     </div>
   );

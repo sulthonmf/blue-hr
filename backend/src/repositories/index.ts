@@ -91,7 +91,8 @@ export const AttendanceRepository = {
     db.all(`SELECT a.*, u.name as user_name, u.position, u.department FROM attendance a JOIN users u ON a.user_id = u.id ORDER BY a.check_in DESC LIMIT 100`, [], (err, rows) => {
       if (err) rej(err); else res(rows as AttendanceRecord[]);
     });
-  })
+  }),
+  findAll: (): Promise<AttendanceRecord[]> => AttendanceRepository.findAllLogs()
 };
 
 export const LeaveRepository = {

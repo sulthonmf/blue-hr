@@ -40,26 +40,37 @@ export const RequestDemoModal: React.FC<RequestDemoModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    const refCode = "DEMO-HR-" + Math.floor(100000 + Math.random() * 900000);
+    setDemoRefCode(refCode);
 
-    setTimeout(() => {
-      const refCode = "DEMO-HR-" + Math.floor(100000 + Math.random() * 900000);
-      setDemoRefCode(refCode);
-
-      // Store in localStorage history
-      const existing = JSON.parse(localStorage.getItem("bluehr_demo_requests") || "[]");
-      existing.push({
-        ...formData,
-        refCode,
-        requestedAt: new Date().toISOString(),
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+      await fetch(`${apiUrl}/public/demo-request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          refCode,
+        }),
       });
-      localStorage.setItem("bluehr_demo_requests", JSON.stringify(existing));
+    } catch (err) {
+      console.warn("Backend email API call fallback to localStorage:", err);
+    }
 
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 1000);
+    // Store in localStorage history backup
+    const existing = JSON.parse(localStorage.getItem("bluehr_demo_requests") || "[]");
+    existing.push({
+      ...formData,
+      refCode,
+      requestedAt: new Date().toISOString(),
+    });
+    localStorage.setItem("bluehr_demo_requests", JSON.stringify(existing));
+
+    setIsSubmitting(false);
+    setIsSubmitted(true);
   };
 
   const handleResetAndClose = () => {
